@@ -12,6 +12,10 @@ type battleService struct {
 
 }
 
+func NewBattleService() BattleService {
+	return &battleService{}
+}
+
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) {
 	room := svc.createRoom(roomName)
 	room.Accept(player)
