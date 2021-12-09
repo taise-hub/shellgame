@@ -1,20 +1,13 @@
 package infrastructure
 
 import (
-	"log"
 	"net/http"
 	"golang.org/x/exp/utf8string"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gorilla/websocket"
 	"github.com/gin-gonic/gin"
-	"github.com/taise-hub/shellgame/src/app/interfaces/controllers"
+	controller "github.com/taise-hub/shellgame/src/app/interfaces/controllers"
 )
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
 
 func Router() {
 	r := gin.Default()
@@ -37,13 +30,8 @@ func Router() {
 			battle.GET("/start", func(c *gin.Context) { controller.Start(c) })
 			battle.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
 			battle.GET("/ws", func(c *gin.Context) {
-				conn, err :=  upgrader.Upgrade(c.Writer, c.Request, nil)
-				if err != nil {
-					log.Printf("failed at WsBattle(): %s\n", err.Error())
-					controller.Error500(c)
-					return
-				}
-				controller.WsBattle(c, conn)
+				// TODO: use websocket handler
+				// controller.WsBattle(c, conn)
 			 })
 			battle.GET("/wswait", func(c *gin.Context) { })
 		}
