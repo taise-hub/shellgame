@@ -4,7 +4,7 @@ import (
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 )
 
-type ConatainerRepository interface {
+type ContainerRepository interface {
 	Run(string) error
 	Create(string) (string, error)
 	Remove(string) error

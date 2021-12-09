@@ -7,20 +7,26 @@ import (
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 )
 
-type ConatainerRepository struct {
+type ContainerRepository struct {
 	ContainerHandler
 }
 
-func (repo *ConatainerRepository) Inspect(name string) error {
+func NewContainerRepository(handler ContainerHandler) *ContainerRepository {
+	return &ContainerRepository {
+			handler,
+	}
+} 
+
+func (repo *ContainerRepository) Inspect(name string) error {
 	err := repo.ContainerHandler.Inspect(name)
 	return err
 }
 
-func (repo *ConatainerRepository) Run(id string) error {
+func (repo *ContainerRepository) Run(id string) error {
 	return repo.ContainerHandler.Run(id)
 }
 
-func (repo *ConatainerRepository) Create(name string) (id string, err error) {
+func (repo *ContainerRepository) Create(name string) (id string, err error) {
 	id, err = repo.ContainerHandler.Create(name)
 	if err != nil {
 		return
@@ -28,11 +34,11 @@ func (repo *ConatainerRepository) Create(name string) (id string, err error) {
 	return id, err
 }
 
-func (repo *ConatainerRepository) Remove(id string) error {
+func (repo *ContainerRepository) Remove(id string) error {
 	return repo.ContainerHandler.Remove(id)
 }
 
-func (repo *ConatainerRepository) Execute(cmd string, container string) (*model.ExecutionResult, error) {
+func (repo *ContainerRepository) Execute(cmd string, container string) (*model.ExecutionResult, error) {
 	reader, err := repo.ContainerHandler.Execute(cmd, container)
 	if err != nil {
 		return nil, err
