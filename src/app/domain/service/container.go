@@ -14,10 +14,10 @@ type ContainerService interface {
 }
 
 type containerService struct {
-	repo repository.ConatainerRepository
+	repo repository.ContainerRepository
 }
 
-func NewContainerService(repo repository.ConatainerRepository) ContainerService {
+func NewContainerService(repo repository.ContainerRepository) ContainerService {
 	return &containerService{
 		repo: repo,
 	}
@@ -51,6 +51,10 @@ func (svc *containerService) Start(name string) error {
 	}
 	if !exists {
 		return fmt.Errorf("Error: container '%s' is already exsits.", name)
+	}
+	err = svc.start(name)
+	if err != nil {
+		return err
 	}
 	return nil
 }
