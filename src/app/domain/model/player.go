@@ -2,12 +2,11 @@ package model
 
 import (
 	"sync"
-	"github.com/gorilla/websocket"
 )
 
 type Player struct {
 	ID 			 string //room.ID + name
-	conn         *websocket.Conn
+	conn         Connection
 	room         *Room
 	// CmdMessage   chan shell.ExecResult
 	// ScoreMessage chan score.ScoreResult
@@ -15,4 +14,11 @@ type Player struct {
 	StartSign    chan struct{}
 	sendMu		 sync.Mutex
 	readMu	 	 sync.Mutex
+}
+
+func NewPlayer(id string, conn Connection) *Player {
+	return &Player{
+		ID: id,
+		conn: conn,
+	}
 }
