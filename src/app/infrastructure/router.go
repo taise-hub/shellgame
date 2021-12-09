@@ -14,7 +14,7 @@ func Router() {
 	r.Static("/static/assets/", "../static/assets")
 	r.LoadHTMLGlob("../templates/*")
 	r.Use(sessions.Sessions("mysession", cookie.NewStore([]byte("secret"))))
-	controller := controller.NewBattleController(NewSqlHandler(), NewContainerHandler())
+	controller := controller.NewBattleController(NewSqlHandler(), NewContainerHandler(), NewWebSocketHandler())
 
 	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 	r.GET("/index", func(c *gin.Context) { controller.Index(c) })
@@ -31,7 +31,11 @@ func Router() {
 			battle.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
 			battle.GET("/ws", func(c *gin.Context) {
 				// TODO: use websocket handler
-				// controller.WsBattle(c, conn)
+				conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+				if err != nil {
+					controller.Error500(c)
+				}
+				controller.WsBattle(c, conn)
 			 })
 			battle.GET("/wswait", func(c *gin.Context) { })
 		}
