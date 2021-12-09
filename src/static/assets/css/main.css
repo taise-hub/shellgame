@@ -1,0 +1,85 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    word-break: break-all;
+    background-color: #000000;
+    font-family: 'courier new', Futura, Helvetica, '游ゴシック', 'メイリオ', Osaka;
+    color: white;
+}
+
+#title {
+    text-align: center;
+    font-size: 4.5em;
+}
+
+.explain {
+    float:  left; 
+    margin-left: 50px;
+}
+
+.explain-inner {
+position: fixed;
+z-index: 1;
+font-weight: bold;
+left: 0;
+top: 0;
+height: 100%;
+width: 100%;
+}
+
+.explain-content {
+width: 80%;
+height: 80%;
+overflow-y: auto;
+overflow-y: scroll;
+color: black;
+background-color: #f4f4f4;
+margin: 8% auto;
+border: 4px solid;
+border-color: gray;
+}
+
+.explain-header span{ 
+font-size: 2em;
+color: rgb(0, 156, 0);
+}
+
+.explain-header {
+padding: 10px;
+text-align: center;
+background: black;
+}
+
+.explain-body {
+margin: 7px;
+padding: 3px 10px 10px 10px;
+}
+
+.explain-body .heading-large {
+font-size: 1.5em;
+font-weight: 900;
+}
+
+  
+.explain-body .heading-middle {
+    font-size: 1.2em;
+    font-weight: 800;
+}
+
+.explain-body li {
+    font-size: 1.2em;
+  }
+.explain-body ul {
+    list-style-type: square;
+    padding-left: 20px;
+}
+
+.explain-body ul p {
+    font-size: 15px;
+    line-height: 150%;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>Wait Room</title>
+    <meta charset="utf-8">
+    <style rel="stylesheet" >
+        @import url("static/assets/css/index.css");
+    </style>
+</head>
+<body>
+    <div class="message">
+       対戦相手が入室するまでお待ちください🙃
+    </div>
+</body>
+</html>
+
+
+<script>
+    url = 'ws://'+document.location.host + "/wswait";
+conn = new WebSocket(url);
+
+conn.onmessage = function(event){
+    console.log(event.data);
+    redirect();
+}
+
+function redirect(){
+    location.href='/battle/start';
+}
+</script>
