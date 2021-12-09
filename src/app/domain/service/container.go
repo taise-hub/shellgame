@@ -1,12 +1,13 @@
 package service
 
 import (
+	"fmt"
 	"github.com/taise-hub/shellgame/src/app/domain/repository"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 )
 
 type ContainerService interface {
-	Exists(string) (bool, error)
+	exists(string) (bool, error)
 	Start(string) error
 	Execute(string, string) (*model.ExecutionResult, error)
 	Remove(string) error
@@ -22,7 +23,7 @@ func NewContainerService(repo repository.ConatainerRepository) ContainerService 
 	}
 }
 
-func (svc *containerService) Exists(name string) (bool, error) {
+func (svc *containerService) exists(name string) (bool, error) {
 	err := svc.repo.Inspect(name)
 	if err.Error() != "" {// TODO check the error string.
 		return false, err
@@ -30,7 +31,7 @@ func (svc *containerService) Exists(name string) (bool, error) {
 	return true, nil
 }
 
-func (svc *containerService) Start(name string) error {
+func (svc *containerService) start(name string) error {
 	id, err := svc.repo.Create(name)
 	if err != nil {
 		return err
@@ -38,6 +39,18 @@ func (svc *containerService) Start(name string) error {
 	err = svc.repo.Run(id)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+
+func (svc *containerService) Start(name string) error {
+	exists, err := svc.exists(name)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return fmt.Errorf("Error: container '%s' is already exsits.", name)
 	}
 	return nil
 }
