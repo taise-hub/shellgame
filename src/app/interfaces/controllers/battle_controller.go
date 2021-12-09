@@ -1,9 +1,14 @@
 package controller
 
 import (
+	"github.com/taise-hub/shellgame/src/app/domain/model"
 	"log"
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/taise-hub/shellgame/src/app/interfaces/database"
+	"github.com/taise-hub/shellgame/src/app/interfaces/container"
+	"github.com/taise-hub/shellgame/src/app/usecase"
+	"github.com/taise-hub/shellgame/src/app/domain/service"
 )
 
 
@@ -13,33 +18,40 @@ type BattleController interface {
 	New(Context)
 	Start(Context)
 	Wait(Context)
-	WsBattle(Context, Conn)
+	WsBattle(Context, model.Connection)
 
 	Error500(Context)
 }
 
 type battleController struct {
-	//uc  HOGEHOGEUsecase
-	//svc HOGEHOGEservice
+	battleService	 service.BattleService
+	questionUsecase  usecase.QuestionUsecase
+	containerUsecase usecase.ContainerUsecase
 }
 
-func NewBattleController(sqlHandler database.SqlHandler) BattleController {
+func NewBattleController(sqlHandler database.SqlHandler, containerHandler container.ContainerHandler) BattleController {
 	return &battleController {
+		battleService: service.NewBattleService(),
+		questionUsecase: usecase.NewQuestionUsecase(
+			database.NewQuestionRepository(sqlHandler)),
+		containerUsecase: usecase.NewContainerUsecase(
+			service.NewContainerService(
+				container.NewContainerRepository(containerHandler))),
 	}
 }
 
 // GET /
-func (con *battleController) Index(c Context) {
+func (ctrl *battleController) Index(c Context) {
 	c.HTML(200, "index.html", nil)
 }
 
 // GET /battle
-func (con *battleController) Battle(c Context) {
+func (ctrl *battleController) Battle(c Context) {
 	c.HTML(200, "new.html", nil)
 }
 
 // POST /battle
-func (con *battleController) New(c Context) {
+func (ctrl *battleController) New(c Context) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 
@@ -47,37 +59,38 @@ func (con *battleController) New(c Context) {
 	session.Set("room", c.PostForm("room"))
 	if err := session.Save(); err != nil {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
-		con.Error500(c)
+		ctrl.Error500(c)
 	}
 	c.Redirect(302, "/battle/wait")
 }
 
 // GET /battle/start
-func (con *battleController) Start(c Context) {
+func (ctrl *battleController) Start(c Context) {
 	c.HTML(200, "battle.html", nil)
 }
 
 /// GET /battle/wait
-func (con *battleController) Wait(c Context) {
+func (ctrl *battleController) Wait(c Context) {
 	c.HTML(200, "wait.html", nil)
 }
 
-func (con *battleController) WsBattle(c Context, conn Conn) {
-	// session := c.MustGet(sessions.DefaultKey).(sessions.Session)
-	// id := session.Get("room").(string) + "_" + session.Get("name").(string)
-	
-	// コンテナの生成。
-	// containerUsecase.Run(id)
-	// roomとplayerインスタンスの生成
+func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
+	// Same as sessions.Defalut()
+	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
+	roomName := session.Get("room").(string)
+	playerName := session.Get("player").(string)
+	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
+	ctrl.containerUsecase.Start(player.ID)
+	ctrl.battleService.ParticipateIn(player, roomName)
 	// PlayerUsecase.Join(player, room)
 	// PlayerServiceの中で、
 	// player.Join(room)
 }
 
-func (con *battleController) Error500(c Context) {
+func (ctrl *battleController) Error500(c Context) {
 	c.HTML(500, "500.html", nil)
 }
 
-func (con *battleController) Error400(c Context) {
+func (ctrl *battleController) Error400(c Context) {
 	c.HTML(400, "400.html", nil)
 }

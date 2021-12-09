@@ -8,6 +8,12 @@ type QuestionRepository struct {
 	SqlHandler
 }
 
+func NewQuestionRepository(handler SqlHandler) *QuestionRepository {
+	return &QuestionRepository {
+		handler,
+	}
+} 
+
 func (repo *QuestionRepository) FindById(identifier string) (question *model.Question, err error) {
 	row, err := repo.SqlHandler.Query("SELECT * FROM questions WHERE id = ?", identifier)
 	if err != nil {

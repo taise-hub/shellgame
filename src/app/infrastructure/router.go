@@ -21,7 +21,7 @@ func Router() {
 	r.Static("/static/assets/", "../static/assets")
 	r.LoadHTMLGlob("../templates/*")
 	r.Use(sessions.Sessions("mysession", cookie.NewStore([]byte("secret"))))
-	controller := controller.NewBattleController(NewSqlHandler())
+	controller := controller.NewBattleController(NewSqlHandler(), NewContainerHandler())
 
 	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 	r.GET("/index", func(c *gin.Context) { controller.Index(c) })
