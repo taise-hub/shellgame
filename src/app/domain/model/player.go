@@ -6,7 +6,7 @@ import (
 
 type Player struct {
 	ID 			 string //room.ID + name
-	conn         Connection
+	Conn         Connection
 	room         *Room
 	// CmdMessage   chan shell.ExecResult
 	// ScoreMessage chan score.ScoreResult
@@ -19,6 +19,6 @@ type Player struct {
 func NewPlayer(id string, conn Connection) *Player {
 	return &Player{
 		ID: id,
-		conn: conn,
+		Conn: conn,
 	}
 }
