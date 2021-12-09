@@ -6,7 +6,6 @@ import (
 )
 
 type ContainerUsecase interface {
-	Exists(string) (bool, error)
 	Start(string) error
 	Execute(string, string) (*model.ExecutionResult, error)
 	Remove(string) error
@@ -20,10 +19,6 @@ func NewContainerUsecase(svc service.ContainerService) ContainerUsecase {
 	return &containerUsecase {
 		svc: svc,
 	}
-}
-
-func (uc *containerUsecase) Exists(name string) (bool, error) {
-	return uc.svc.Exists(name)
 }
 
 func (uc *containerUsecase) Start(name string) error {
