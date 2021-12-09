@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/taise-hub/shellgame/src/app/interfaces/database"
+	"github.com/taise-hub/shellgame/src/app/interfaces/websocket"
 	"github.com/taise-hub/shellgame/src/app/interfaces/container"
 	"github.com/taise-hub/shellgame/src/app/usecase"
 	"github.com/taise-hub/shellgame/src/app/domain/service"
@@ -26,17 +27,16 @@ type BattleController interface {
 type battleController struct {
 	battleService	 service.BattleService
 	questionUsecase  usecase.QuestionUsecase
-	containerUsecase usecase.ContainerUsecase
 }
 
-func NewBattleController(sqlHandler database.SqlHandler, containerHandler container.ContainerHandler) BattleController {
+func NewBattleController(sqlHandler database.SqlHandler, containerHandler container.ContainerHandler, webSocketHandler websocket.WebSocketHandler) BattleController {
 	return &battleController {
-		battleService: service.NewBattleService(),
+		battleService: service.NewBattleService(
+			websocket.NewWebSocketRepository(webSocketHandler),
+			service.NewContainerService(container.NewContainerRepository(containerHandler)),
+		),
 		questionUsecase: usecase.NewQuestionUsecase(
 			database.NewQuestionRepository(sqlHandler)),
-		containerUsecase: usecase.NewContainerUsecase(
-			service.NewContainerService(
-				container.NewContainerRepository(containerHandler))),
 	}
 }
 
@@ -80,11 +80,12 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
 	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
-	ctrl.containerUsecase.Start(player.ID)
+	ctrl.battleService.Start(player.ID)
 	ctrl.battleService.ParticipateIn(player, roomName)
-	// PlayerUsecase.Join(player, room)
-	// PlayerServiceの中で、
-	// player.Join(room)
+	ctrl.battleService.Prepare(roomName)
+	// ctrl.battleService.receiver(player)
+	// player.Conn.Write(v)
+	// player.Conn.Read(v)
 }
 
 func (ctrl *battleController) Error500(c Context) {
