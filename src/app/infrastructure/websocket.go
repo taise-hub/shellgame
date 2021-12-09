@@ -1,13 +1,12 @@
 package infrastructure
 
 import (
+	"github.com/taise-hub/shellgame/src/app/domain/model"
 	"sync"
-	"net/http"
 	"github.com/gorilla/websocket"
 )
 
 type WebSocketHandler struct {
-	conn *websocket.Conn
 	writeMu	sync.Mutex
 	readMu  sync.Mutex
 }
@@ -17,26 +16,21 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func NewWebSocketHandler(w http.ResponseWriter, r *http.Request) (*WebSocketHandler, error) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		return nil, err
-	}
+func NewWebSocketHandler() *WebSocketHandler {
 	handler := new(WebSocketHandler)
-	handler.conn = conn
-	return handler, nil
+	return handler
 }
 
-func (h *WebSocketHandler) Write(v interface{}) error {
+func (h *WebSocketHandler) Write(conn model.Connection, v interface{}) error {
 	h.writeMu.Lock()
 	defer h.writeMu.Unlock()
-	return h.conn.WriteJSON(v)
+	return conn.WriteJSON(v)
 }
 
-func (h *WebSocketHandler) Read(v interface{}) error {
+func (h *WebSocketHandler) Read(conn model.Connection, v interface{}) error {
 	h.readMu.Lock()
 	defer h.writeMu.Unlock()
-	err :=  h.conn.ReadJSON(v)
+	err :=  conn.ReadJSON(v)
 	if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure){
 		return err
 	}
