@@ -8,7 +8,7 @@ type Player struct {
 	ID 			 string //room.ID + name
 	Conn         Connection
 	room         *Room
-	// CmdMessage   chan shell.ExecResult
+	CommandMessage   chan *CommandResult
 	// ScoreMessage chan score.ScoreResult
 	owner        bool
 	StartSign    chan struct{}
@@ -21,4 +21,8 @@ func NewPlayer(id string, conn Connection) *Player {
 		ID: id,
 		Conn: conn,
 	}
+}
+
+func (p *Player) GetRoom() *Room {
+	return p.room
 }

@@ -10,7 +10,7 @@ type Room struct {
 	players          []*Player //PlayerのID
 	questions		 []string
 
-	// CmdForward       chan shell.ExecResult
+	CommandChannel       chan *CommandResult
 	// ScoreForward     chan score.ScoreResult
 }
 
@@ -30,4 +30,15 @@ func (r *Room) Accept(player *Player) error {
 	}
 	r.players = append(r.players, player)
 	return nil
+}
+
+func (r *Room) Hub() {
+	for {
+		select {
+		case result := <- r.CommandChannel:
+			for _, player := range r.players {
+				player.CommandMessage <- result
+			}
+		}
+	}
 }

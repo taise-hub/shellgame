@@ -82,10 +82,7 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
 	ctrl.battleService.Start(player.ID)
 	ctrl.battleService.ParticipateIn(player, roomName)
-	ctrl.battleService.Prepare(roomName)
-	// ctrl.battleService.receiver(player)
-	// player.Conn.Write(v)
-	// player.Conn.Read(v)
+	ctrl.battleService.Receiver(player)
 }
 
 func (ctrl *battleController) Error500(c Context) {
