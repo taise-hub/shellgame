@@ -9,5 +9,5 @@ type ContainerRepository interface {
 	Create(string) (string, error)
 	Remove(string) error
 	Inspect(string) error
-	Execute(string, string) (*model.ExecutionResult, error)
+	Execute(string, string) (*model.CommandResult, error)
 }

@@ -9,7 +9,7 @@ import (
 type ContainerService interface {
 	exists(string) (bool, error)
 	Start(string) error
-	Execute(string, string) (*model.ExecutionResult, error)
+	Execute(string, string) (*model.CommandResult, error)
 	Remove(string) error
 }
 
@@ -59,7 +59,7 @@ func (svc *containerService) Start(name string) error {
 	return nil
 }
 
-func (svc *containerService) Execute(cmd string, name string) (*model.ExecutionResult, error) {
+func (svc *containerService) Execute(cmd string, name string) (*model.CommandResult, error) {
 	result, err :=  svc.repo.Execute(cmd, name)
 	if err != nil {
 		return nil, err

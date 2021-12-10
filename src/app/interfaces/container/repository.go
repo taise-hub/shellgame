@@ -38,7 +38,7 @@ func (repo *ContainerRepository) Remove(id string) error {
 	return repo.ContainerHandler.Remove(id)
 }
 
-func (repo *ContainerRepository) Execute(cmd string, container string) (*model.ExecutionResult, error) {
+func (repo *ContainerRepository) Execute(cmd string, container string) (*model.CommandResult, error) {
 	reader, err := repo.ContainerHandler.Execute(cmd, container)
 	if err != nil {
 		return nil, err
@@ -55,10 +55,10 @@ func (repo *ContainerRepository) Execute(cmd string, container string) (*model.E
 	if err != nil {
 		return nil, err
 	}
-	executionResult := new(model.ExecutionResult)
-	executionResult.Command  = cmd
-	executionResult.StdOut   = stdout
-	executionResult.StdErr   = stderr
+	commandResult := new(model.CommandResult)
+	commandResult.Command  = cmd
+	commandResult.StdOut   = stdout
+	commandResult.StdErr   = stderr
 
-	return executionResult, nil
+	return commandResult, nil
 }

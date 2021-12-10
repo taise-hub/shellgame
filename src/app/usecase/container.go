@@ -7,7 +7,7 @@ import (
 
 type ContainerUsecase interface {
 	Start(string) error
-	Execute(string, string) (*model.ExecutionResult, error)
+	Execute(string, string) (*model.CommandResult, error)
 	Remove(string) error
 }
 
@@ -25,7 +25,7 @@ func (uc *containerUsecase) Start(name string) error {
 	return uc.svc.Start(name)
 }
 
-func (uc *containerUsecase) Execute(cmd string, name string) (*model.ExecutionResult, error) {
+func (uc *containerUsecase) Execute(cmd string, name string) (*model.CommandResult, error) {
 	return uc.svc.Execute(cmd, name)
 }
 
