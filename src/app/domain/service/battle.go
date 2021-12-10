@@ -10,6 +10,7 @@ type BattleService interface {
 	Start(string) error
 	ParticipateIn(*model.Player, string)
 	Receiver(*model.Player) error
+	Sender(*model.Player) error
 }
 
 type battleService struct {
@@ -31,12 +32,15 @@ func (svc *battleService) Start(name string) error {
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) {
 	room := svc.createRoom(roomName)
 	room.Accept(player)
+	player.SetRoom(room)
 }
 
 func (svc *battleService) createRoom(name string) *model.Room {
 	supervisor := model.GetSupervisor()
 	if supervisor.HasRoom(name) {
 		return supervisor.GetRoom(name)
+		// room := supervisor.GetRoom(name)
+		// go room.Hub()
 	}
 	room := supervisor.CreateRoom(name)
 	go room.Hub()
@@ -48,14 +52,14 @@ func (svc *battleService) createRoom(name string) *model.Room {
 func (svc *battleService) Receiver(player *model.Player) error {
 	var received model.RecievePacket
 	for {
-		err := svc.socketRepo.Read(player.Conn, received)
+		err := svc.socketRepo.Read(player.Conn, &received)
 		if err != nil {
 			return err
 		}
 		switch received.Type {
 		case "cmd":
 			cmd := *received.Command
-			result, err := svc.containerSvc.Execute(player.ID, cmd)
+			result, err := svc.containerSvc.Execute(cmd, player.ID)
 			if err != nil {
 				return err
 			}
@@ -64,6 +68,19 @@ func (svc *battleService) Receiver(player *model.Player) error {
 			break
 		default:
 			return fmt.Errorf("Invalid DataType: %v\n", received.Type)
+		}
+	}
+}
+
+
+func (svc *battleService) Sender(player *model.Player) error {
+	for {
+		select {
+		case recieved := <- player.CommandMessage:
+			err := svc.socketRepo.Write(player.Conn, recieved)
+			if err != nil {
+				return err
+			}
 		}
 	}
 }
