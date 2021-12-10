@@ -55,7 +55,7 @@ func (ctrl *battleController) New(c Context) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 
-	session.Set("name", c.PostForm("name"))
+	session.Set("player", c.PostForm("name"))
 	session.Set("room", c.PostForm("room"))
 	if err := session.Save(); err != nil {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
@@ -82,7 +82,7 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
 	ctrl.battleService.Start(player.ID)
 	ctrl.battleService.ParticipateIn(player, roomName)
-	ctrl.battleService.Receiver(player)
+	go ctrl.battleService.Receiver(player)
 }
 
 func (ctrl *battleController) Error500(c Context) {
