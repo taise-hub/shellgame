@@ -3,9 +3,9 @@
 <head>
     <title>Wait Room</title>
     <meta charset="utf-8">
-    <style rel="stylesheet" >
-        @import url("static/assets/css/index.css");
-    </style>
+    <!-- <style rel="stylesheet" >
+        @import url("../static/assets/css/index.css");
+    </style> -->
 </head>
 <body>
     <div class="message">
@@ -16,7 +16,7 @@
 
 
 <script>
-    url = 'ws://'+document.location.host + "/wswait";
+    url = 'ws://'+document.location.host + "/battle/wait";
 conn = new WebSocket(url);
 
 conn.onmessage = function(event){
