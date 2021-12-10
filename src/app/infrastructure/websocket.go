@@ -7,8 +7,6 @@ import (
 )
 
 type WebSocketHandler struct {
-	writeMu	sync.Mutex
-	readMu  sync.Mutex
 }
 
 var upgrader = websocket.Upgrader{
@@ -22,15 +20,17 @@ func NewWebSocketHandler() *WebSocketHandler {
 }
 
 func (h *WebSocketHandler) Write(conn model.Connection, v interface{}) error {
-	h.writeMu.Lock()
-	defer h.writeMu.Unlock()
+	mu := new(sync.Mutex)
+	mu.Lock()
+	defer mu.Unlock()
 	return conn.WriteJSON(v)
 }
 
 func (h *WebSocketHandler) Read(conn model.Connection, v interface{}) error {
-	h.readMu.Lock()
-	defer h.writeMu.Unlock()
-	err :=  conn.ReadJSON(v)
+	mu := new(sync.Mutex)
+	mu.Lock()
+	defer mu.Unlock()
+	err := conn.ReadJSON(v)
 	if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure){
 		return err
 	}
