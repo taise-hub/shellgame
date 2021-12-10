@@ -25,8 +25,10 @@ func NewContainerService(repo repository.ContainerRepository) ContainerService {
 
 func (svc *containerService) exists(name string) (bool, error) {
 	err := svc.repo.Inspect(name)
-	if err.Error() != "" {// TODO check the error string.
-		return false, err
+	if err != nil {
+		if err.Error() != "" {// TODO check the error string.
+			return false, err
+		}
 	}
 	return true, nil
 }
