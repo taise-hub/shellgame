@@ -20,9 +20,13 @@ func NewPlayer(id string, conn Connection) *Player {
 	return &Player{
 		ID: id,
 		Conn: conn,
+		CommandMessage: make(chan *CommandResult),
 	}
 }
 
 func (p *Player) GetRoom() *Room {
 	return p.room
+}
+func (p *Player) SetRoom(room *Room) {
+	p.room = room
 }

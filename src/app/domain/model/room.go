@@ -17,6 +17,8 @@ type Room struct {
 func NewRoom(name string) *Room {
 	return &Room {
 		Name: name,
+		StartSignForward: make(chan struct{}),
+		CommandChannel: make(chan *CommandResult),
 	}
 }
 
