@@ -14,7 +14,7 @@ var currentCommand = 0;
 
 conn.onmessage = function(event){
     var response = JSON.parse(event.data);
-    switch (response.DataType) {
+    switch (response.Type) {
         case 'question':
             // 問題の表示
             setQuestion(response.QuestionNumebers)
@@ -27,9 +27,9 @@ conn.onmessage = function(event){
             elem.innerText = response.Time;
             console.log(response.Time)
             return
-        case 'cmd':
+        case 'command':
             // 最初に自分のコマンドか相手のコマンドか判定して処理を変える。
-            if (response.Owner) {
+            if (response.Personally) {
                 switchConsoleLeft(response);
             }
             else {
@@ -37,7 +37,7 @@ conn.onmessage = function(event){
             }
             break;
         case 'score':
-            if (response.Owner) {
+            if (response.Personally) {
                 var score = document.getElementById("myScore");
                 score.value = response.Score;
             }
@@ -76,8 +76,8 @@ window.addEventListener("keyup", function(e){
             return false;
         }
         var msg = {
-            DataType: "cmd",
-            Cmd: command,
+            Type: "command",
+            Command: command,
         };
         conn.send(JSON.stringify(msg));
         commandHistory.push(rawCommand);
@@ -114,7 +114,7 @@ function switchCommand(newCommand) {
 //自分のコマンド送信時の処理
 function switchConsoleLeft(commandResponse) {
     var si = document.getElementById("standard-input-left");
-    var parsedResponse = b64DecodeUnicode(commandResponse.StdOut).split('\n');
+    var parsedResponse = b64DecodeUnicode(commandResponse.CommandResult.StdOut).split('\n');
     if (parsedResponse.length > 1) {
         parsedResponse.pop();
         leftCurrentDir = parsedResponse.pop();
@@ -133,7 +133,7 @@ function switchConsoleLeft(commandResponse) {
 // 右画面の制御
 function switchConsoleRight(commandResponse) {
     var si = document.getElementById("standard-input-right");
-    var parsedResponse = b64DecodeUnicode(commandResponse.StdOut).split('\n');
+    var parsedResponse = b64DecodeUnicode(commandResponse.CommandResult.StdOut).split('\n');
     if (parsedResponse.length > 1) {
         parsedResponse.pop();
         rightCurrentDir = parsedResponse.pop();

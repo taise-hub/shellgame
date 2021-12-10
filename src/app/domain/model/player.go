@@ -8,9 +8,9 @@ type Player struct {
 	ID 			 string //room.ID + name
 	Conn         Connection
 	room         *Room
-	CommandMessage   chan *CommandResult
+	Message      chan TransmissionPacket
 	// ScoreMessage chan score.ScoreResult
-	owner        bool
+	Personally   bool
 	StartSign    chan struct{}
 	sendMu		 sync.Mutex
 	readMu	 	 sync.Mutex
@@ -20,7 +20,7 @@ func NewPlayer(id string, conn Connection) *Player {
 	return &Player{
 		ID: id,
 		Conn: conn,
-		CommandMessage: make(chan *CommandResult),
+		Message: make(chan TransmissionPacket),
 	}
 }
 

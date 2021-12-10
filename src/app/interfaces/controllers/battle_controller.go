@@ -83,6 +83,7 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	ctrl.battleService.Start(player.ID)
 	ctrl.battleService.ParticipateIn(player, roomName)
 	go ctrl.battleService.Receiver(player)
+	go ctrl.battleService.Sender(player)
 }
 
 func (ctrl *battleController) Error500(c Context) {

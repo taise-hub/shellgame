@@ -56,14 +56,18 @@ func (svc *battleService) Receiver(player *model.Player) error {
 		if err != nil {
 			return err
 		}
+		player.Personally = true
 		switch received.Type {
-		case "cmd":
-			cmd := *received.Command
-			result, err := svc.containerSvc.Execute(cmd, player.ID)
+		case "command":
+			command := *received.Command
+			result, err := svc.containerSvc.Execute(command, player.ID)
 			if err != nil {
 				return err
 			}
-			player.GetRoom().CommandChannel <- result
+			packet := new(model.TransmissionPacket)
+			packet.Type = "command"
+			packet.CommandResult = result
+			player.GetRoom().PacketChannel <- *packet
 		case "score":
 			break
 		default:
@@ -72,15 +76,16 @@ func (svc *battleService) Receiver(player *model.Player) error {
 	}
 }
 
-
 func (svc *battleService) Sender(player *model.Player) error {
 	for {
 		select {
-		case recieved := <- player.CommandMessage:
-			err := svc.socketRepo.Write(player.Conn, recieved)
+		case packet := <- player.Message:
+			packet.Personally = player.Personally
+			err := svc.socketRepo.Write(player.Conn, packet)
 			if err != nil {
 				return err
 			}
 		}
+		player.Personally = false
 	}
 }

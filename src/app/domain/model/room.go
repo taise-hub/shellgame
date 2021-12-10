@@ -10,15 +10,14 @@ type Room struct {
 	players          []*Player //PlayerのID
 	questions		 []string
 
-	CommandChannel       chan *CommandResult
-	// ScoreForward     chan score.ScoreResult
+	PacketChannel      chan TransmissionPacket
 }
 
 func NewRoom(name string) *Room {
 	return &Room {
 		Name: name,
 		StartSignForward: make(chan struct{}),
-		CommandChannel: make(chan *CommandResult),
+		PacketChannel: make(chan TransmissionPacket),
 	}
 }
 
@@ -36,11 +35,9 @@ func (r *Room) Accept(player *Player) error {
 
 func (r *Room) Hub() {
 	for {
-		select {
-		case result := <- r.CommandChannel:
-			for _, player := range r.players {
-				player.CommandMessage <- result
-			}
+		packet := <- r.PacketChannel
+		for _, player := range r.players {
+			player.Message <- packet
 		}
 	}
 }

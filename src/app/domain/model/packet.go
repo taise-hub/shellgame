@@ -6,3 +6,9 @@ type RecievePacket struct {
 	Answer	   *string
 	Command    *string
 }
+
+type TransmissionPacket struct {
+	Type     	  string
+	Personally    bool
+	CommandResult *CommandResult
+}

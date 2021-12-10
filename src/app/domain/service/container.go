@@ -66,8 +66,6 @@ func (svc *containerService) Execute(cmd string, name string) (*model.CommandRes
 	if err != nil {
 		return nil, err
 	}
-	// WARN: データ設計見直しの可能性あり
-	result.DataType = "cmd"
 	return  result, nil
 }
 
