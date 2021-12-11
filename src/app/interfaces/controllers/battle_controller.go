@@ -21,7 +21,8 @@ type BattleController interface {
 	WsWait(Context, model.Connection)
 	WsBattle(Context, model.Connection)
 
-	Error500(Context)
+	Error500(Context, string)
+	Error400(Context)
 }
 
 type battleController struct {
@@ -59,7 +60,7 @@ func (ctrl *battleController) New(c Context) {
 	session.Set("room", c.PostForm("room"))
 	if err := session.Save(); err != nil {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
-		ctrl.Error500(c)
+		ctrl.Error500(c, err.Error())
 	}
 	c.Redirect(302, "/battle/wait")
 }
@@ -82,15 +83,15 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
 	err := ctrl.battleService.Start(player.ID)
 	if err != nil {
-		ctrl.Error500(c)
+		ctrl.Error500(c, err.Error())
 	}
 	ctrl.battleService.ParticipateIn(player, roomName)
 	go ctrl.battleService.Receiver(player)
 	go ctrl.battleService.Sender(player)
 }
 
-func (ctrl *battleController) Error500(c Context) {
-	c.HTML(500, "500.html", nil)
+func (ctrl *battleController) Error500(c Context, err string) {
+	c.HTML(500, "500.html", err)
 }
 
 func (ctrl *battleController) Error400(c Context) {
