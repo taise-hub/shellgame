@@ -1,6 +1,7 @@
 package service
 
 import (
+	"log"
 	"github.com/taise-hub/shellgame/src/app/domain/repository"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 )
@@ -47,11 +48,18 @@ func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) 
 }
 
 
-//FIXME: name is not appropriate.
 func (svc *battleService) Receiver(player *model.Player) {
+	defer func() {
+		player.Conn.Close()
+		player.Done <- struct{}{}
+	}()
 	var received model.RecievePacket
 	for {
-		svc.socketRepo.Read(player.Conn, &received)
+		err := svc.socketRepo.Read(player.Conn, &received)
+		if err != nil { // Most of the time, it's "1001 going away."
+			log.Println(err.Error())
+			return
+		}
 		player.Personally = true
 		switch received.Type {
 		case "command":
@@ -68,8 +76,13 @@ func (svc *battleService) Receiver(player *model.Player) {
 }
 
 func (svc *battleService) Sender(player *model.Player) {
+	defer func() {
+		player.Conn.Close()
+	}()
 	for {
 		select {
+		case <- player.Done:
+			return
 		case packet := <- player.Message:
 			packet.Personally = player.Personally
 			svc.socketRepo.Write(player.Conn, packet)
