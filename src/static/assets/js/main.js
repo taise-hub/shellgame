@@ -19,13 +19,12 @@ conn.onmessage = function(event){
             // 問題の表示
             setQuestion(response.QuestionNumebers)
             break;
-        case 'ticker':
-            if (response.IsTimeUp) {
-                alert("timeup!!")
-            }
+        case 'tick':
+            // if (response.IsTimeUp) {
+            //     alert("timeup!!")
+            // }
             elem = document.getElementById("elapsed-seconds");
-            elem.innerText = response.Time;
-            console.log(response.Time)
+            elem.innerText = response.Tick;
             return
         case 'command':
             // 最初に自分のコマンドか相手のコマンドか判定して処理を変える。
