@@ -31,8 +31,10 @@ func (h *WebSocketHandler) Read(conn model.Connection, v interface{}) error {
 	mu.Lock()
 	defer mu.Unlock()
 	err := conn.ReadJSON(v)
-	if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure){
-		return err
+	if err != nil {
+		if websocket.IsUnexpectedCloseError(err, websocket.CloseAbnormalClosure){
+			return err
+		}
 	}
 	return nil
 }
