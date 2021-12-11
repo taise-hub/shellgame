@@ -33,33 +33,29 @@ func (r *Room) Accept(player *Player) error {
 }
 
 func (r *Room) Hub() {
-	count := 0
-	done := make(chan struct{})
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(time.Second)
 	defer func() {
 		ticker.Stop()
 	}()
 
-	for {
+	for begin := time.Now();; {
 		select {
-		case <- done:
-			return
 		case packet := <- r.PacketChannel:
 			for _, player := range r.players {
 				player.Message <- packet
 			}
-		case t := <-ticker.C:
+		case <-ticker.C:
+			elapsed := int(time.Since(begin).Seconds())
+			// 5 minitues elapsed
+			if elapsed > 300 {
+				return
+			}
 			packet := new(TransmissionPacket)
-			packet.Type = "tick"
-			packet.Tick = t
+			packet.Type = "tick"	 
+			packet.Tick = elapsed
 			for _, player := range r.players {
 				player.Message <- *packet
 			}
-			// 5 minutes elapsed.
-			if count > 5 {
-				done <- struct{}{}
-			}
-			count++
 		}
 	}
 }
