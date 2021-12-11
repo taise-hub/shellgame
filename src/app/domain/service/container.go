@@ -26,6 +26,7 @@ func NewContainerService(repo repository.ContainerRepository) ContainerService {
 func (svc *containerService) exists(name string) (bool, error) {
 	err := svc.repo.Inspect(name)
 	if err != nil {
+		fmt.Printf("error: %s\n", err.Error())
 		if err.Error() != "" {// TODO check the error string.
 			return false, err
 		}
@@ -51,7 +52,7 @@ func (svc *containerService) Start(name string) error {
 	if err != nil {
 		return err
 	}
-	if !exists {
+	if exists {
 		return fmt.Errorf("Error: container '%s' is already exsits.", name)
 	}
 	err = svc.start(name)
