@@ -9,9 +9,7 @@ type Player struct {
 	Conn         Connection
 	room         *Room
 	Message      chan TransmissionPacket
-	// ScoreMessage chan score.ScoreResult
 	Personally   bool
-	StartSign    chan struct{}
 	sendMu		 sync.Mutex
 	readMu	 	 sync.Mutex
 }

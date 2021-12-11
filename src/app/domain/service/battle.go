@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/taise-hub/shellgame/src/app/domain/repository"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 )
@@ -9,8 +8,9 @@ import (
 type BattleService interface {
 	Start(string) error
 	ParticipateIn(*model.Player, string)
-	Receiver(*model.Player) error
-	Sender(*model.Player) error
+	Receiver(*model.Player)
+	Sender(*model.Player)
+	StartSignalSender(*model.Player, string)
 }
 
 type battleService struct {
@@ -30,13 +30,12 @@ func (svc *battleService) Start(name string) error {
 }
 
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) {
-	room := svc.createRoom(roomName)
+	room := svc.createRoom(roomName, model.GetSupervisor())
 	room.Accept(player)
 	player.SetRoom(room)
 }
 
-func (svc *battleService) createRoom(name string) *model.Room {
-	supervisor := model.GetSupervisor()
+func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) *model.Room {
 	if supervisor.HasRoom(name) {
 		return supervisor.GetRoom(name)
 		// room := supervisor.GetRoom(name)
@@ -49,43 +48,45 @@ func (svc *battleService) createRoom(name string) *model.Room {
 
 
 //FIXME: name is not appropriate.
-func (svc *battleService) Receiver(player *model.Player) error {
+func (svc *battleService) Receiver(player *model.Player) {
 	var received model.RecievePacket
 	for {
-		err := svc.socketRepo.Read(player.Conn, &received)
-		if err != nil {
-			return err
-		}
+		svc.socketRepo.Read(player.Conn, &received)
 		player.Personally = true
 		switch received.Type {
 		case "command":
 			command := *received.Command
-			result, err := svc.containerSvc.Execute(command, player.ID)
-			if err != nil {
-				return err
-			}
+			result, _ := svc.containerSvc.Execute(command, player.ID)
 			packet := new(model.TransmissionPacket)
 			packet.Type = "command"
 			packet.CommandResult = result
 			player.GetRoom().PacketChannel <- *packet
 		case "score":
 			break
-		default:
-			return fmt.Errorf("Invalid DataType: %v\n", received.Type)
 		}
 	}
 }
 
-func (svc *battleService) Sender(player *model.Player) error {
+func (svc *battleService) Sender(player *model.Player) {
 	for {
 		select {
 		case packet := <- player.Message:
 			packet.Personally = player.Personally
-			err := svc.socketRepo.Write(player.Conn, packet)
-			if err != nil {
-				return err
-			}
+			svc.socketRepo.Write(player.Conn, packet)
 		}
 		player.Personally = false
+	}
+}
+
+func (svc *battleService) StartSignalSender(player *model.Player, roomName string){
+	room := svc.createRoom(roomName, model.GetSignalSupervisor())
+	room.Accept(player)
+	player.SetRoom(room)
+	go func() {
+		<- player.Message
+		svc.socketRepo.Write(player.Conn, struct{}{})
+	}()
+	if len(room.GetPlayers()) == 2 {
+		room.PacketChannel <- *new(model.TransmissionPacket)
 	}
 }

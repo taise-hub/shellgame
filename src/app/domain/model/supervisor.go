@@ -1,7 +1,7 @@
 package model
 
 var (
-	// preSupervisor *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
+	signalSupervisor *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
 	supervisor *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
 )
 
@@ -21,6 +21,10 @@ type Supervisor struct {
 
 func GetSupervisor() *Supervisor {
 	return supervisor
+}
+
+func GetSignalSupervisor() *Supervisor {
+	return signalSupervisor
 }
 
 // func GetPreSupervisor() *Supervisor {

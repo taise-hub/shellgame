@@ -6,8 +6,7 @@ import (
 
 type Room struct {
 	Name			 string
-	StartSignForward chan struct{}
-	players          []*Player //PlayerのID
+	players          []*Player
 	questions		 []string
 
 	PacketChannel      chan TransmissionPacket
@@ -16,7 +15,6 @@ type Room struct {
 func NewRoom(name string) *Room {
 	return &Room {
 		Name: name,
-		StartSignForward: make(chan struct{}),
 		PacketChannel: make(chan TransmissionPacket),
 	}
 }

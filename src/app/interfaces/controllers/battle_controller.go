@@ -12,13 +12,13 @@ import (
 	"github.com/taise-hub/shellgame/src/app/domain/service"
 )
 
-
 type BattleController interface {
 	Index(Context)
 	Battle(Context)
 	New(Context)
 	Start(Context)
 	Wait(Context)
+	WsWait(Context, model.Connection)
 	WsBattle(Context, model.Connection)
 
 	Error500(Context)
@@ -80,7 +80,10 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
 	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
-	ctrl.battleService.Start(player.ID)
+	err := ctrl.battleService.Start(player.ID)
+	if err != nil {
+		ctrl.Error500(c)
+	}
 	ctrl.battleService.ParticipateIn(player, roomName)
 	go ctrl.battleService.Receiver(player)
 	go ctrl.battleService.Sender(player)
@@ -92,4 +95,13 @@ func (ctrl *battleController) Error500(c Context) {
 
 func (ctrl *battleController) Error400(c Context) {
 	c.HTML(400, "400.html", nil)
+}
+
+func (ctrl *battleController) WsWait(c Context, conn model.Connection) {
+	// Same as sessions.Defalut()
+	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
+	roomName := session.Get("room").(string)
+	playerName := session.Get("player").(string)
+	player := model.NewPlayer(playerName, conn)
+	ctrl.battleService.StartSignalSender(player, roomName)
 }
