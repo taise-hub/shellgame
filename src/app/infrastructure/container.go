@@ -1,7 +1,6 @@
 package infrastructure
 
 import (
-	"log"
 	"bufio"
 	"context"
 	"github.com/docker/docker/api/types"
@@ -25,10 +24,6 @@ func NewContainerHandler() *ContainerHandler {
 
 func (h *ContainerHandler) Exists(name string) bool {
 	_, err := h.Client.ContainerInspect(context.Background(), name)
-	if err != nil {
-		log.Fatalf("%v\n", err.Error())
-		return false
-	}
 	return !client.IsErrNotFound(err)
 }
 
