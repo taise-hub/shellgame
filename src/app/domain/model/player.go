@@ -9,6 +9,7 @@ type Player struct {
 	Conn         Connection
 	room         *Room
 	Message      chan TransmissionPacket
+	Done		 chan struct{}
 	Personally   bool
 	sendMu		 sync.Mutex
 	readMu	 	 sync.Mutex
@@ -18,6 +19,7 @@ func NewPlayer(id string, conn Connection) *Player {
 	return &Player{
 		ID: id,
 		Conn: conn,
+		Done: make(chan struct{}),
 		Message: make(chan TransmissionPacket),
 	}
 }
