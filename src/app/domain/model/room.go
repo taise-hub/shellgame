@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"time"
 )
 
 type Room struct {
@@ -32,10 +33,33 @@ func (r *Room) Accept(player *Player) error {
 }
 
 func (r *Room) Hub() {
+	count := 0
+	done := make(chan struct{})
+	ticker := time.NewTicker(5 * time.Second)
+	defer func() {
+		ticker.Stop()
+	}()
+
 	for {
-		packet := <- r.PacketChannel
-		for _, player := range r.players {
-			player.Message <- packet
+		select {
+		case <- done:
+			return
+		case packet := <- r.PacketChannel:
+			for _, player := range r.players {
+				player.Message <- packet
+			}
+		case t := <-ticker.C:
+			packet := new(TransmissionPacket)
+			packet.Type = "tick"
+			packet.Tick = t
+			for _, player := range r.players {
+				player.Message <- *packet
+			}
+			// 5 minutes elapsed.
+			if count > 5 {
+				done <- struct{}{}
+			}
+			count++
 		}
 	}
 }
