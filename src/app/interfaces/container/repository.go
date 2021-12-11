@@ -17,9 +17,8 @@ func NewContainerRepository(handler ContainerHandler) *ContainerRepository {
 	}
 } 
 
-func (repo *ContainerRepository) Inspect(name string) error {
-	err := repo.ContainerHandler.Inspect(name)
-	return err
+func (repo *ContainerRepository) Exists(name string) bool {
+	return repo.ContainerHandler.Exists(name)
 }
 
 func (repo *ContainerRepository) Run(id string) error {

@@ -8,6 +8,6 @@ type ContainerRepository interface {
 	Run(string) error
 	Create(string) (string, error)
 	Remove(string) error
-	Inspect(string) error
+	Exists(string) bool
 	Execute(string, string) (*model.CommandResult, error)
 }

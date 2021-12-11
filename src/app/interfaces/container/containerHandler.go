@@ -5,7 +5,7 @@ import (
 )
 
 type ContainerHandler interface {
-	Inspect(string) error
+	Exists(string) bool
 	Run(string) error
 	Create(string) (string, error)
 	Remove(string) (error)
