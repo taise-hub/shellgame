@@ -29,8 +29,10 @@ func NewBattleService(questionRepo repository.QuestionRepository, socketRepo rep
 	}
 }
 
-func (svc *battleService) Start(name string) error {
-	return svc.containerSvc.Start(name)
+func (svc *battleService) buildPacket(_type string) *model.TransmissionPacket {
+	packet := new(model.TransmissionPacket)
+	packet.Type = _type
+	return packet
 }
 
 func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) *model.Room {
@@ -43,6 +45,10 @@ func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) 
 	return room
 }
 
+
+func (svc *battleService) Start(name string) error {
+	return svc.containerSvc.Start(name)
+}
 
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) error {
 	room := svc.createRoom(roomName, model.GetSupervisor())
@@ -79,15 +85,13 @@ func (svc *battleService) Receiver(player *model.Player) {
 		player.Personally = true
 		switch received.Type {
 		case "command":
-			packet := new(model.TransmissionPacket)
-			packet.Type = "command"
+			packet := svc.buildPacket("command")
 			command := *received.Command
 			result, _ := svc.containerSvc.Execute(command, player.ID)
 			packet.CommandResult = result
 			room.PacketChannel <- *packet
 		case "answer":
-			packet := new(model.TransmissionPacket)
-			packet.Type = "answer"
+			packet := svc.buildPacket("answer")
 			q := room.GetQuestion(*received.AnswerName)
 			if q  == nil || player.IsAnswered(q.Name) {
 				continue
@@ -107,6 +111,9 @@ func (svc *battleService) Sender(player *model.Player) {
 	defer func() {
 		player.Conn.Close()
 	}()
+	packet := svc.buildPacket("question")
+	packet.Questions = player.GetRoom().GetQuestionNames()
+	svc.socketRepo.Write(player.Conn, packet)
 	for {
 		select {
 		case <- player.Done:

@@ -17,7 +17,7 @@ conn.onmessage = function(event){
     switch (response.Type) {
         case 'question':
             // 問題の表示
-            setQuestion(response.QuestionNumebers)
+            setQuestion(response.Questions)
             break;
         case 'tick':
             if (response.Tick === 300 ) {
@@ -236,9 +236,9 @@ function requestAnswer() {
 
 }
 
-function setQuestion(questionNumebers) {
+function setQuestion(questions) {
     var questionlist = document.getElementById("question-list");
-    for (const elem of questionNumebers) {
+    for (const elem of questions) {
         q = document.createElement("li");
         q.innerText = "/home/sechacker/" + elem;
         questionlist.appendChild(q);
