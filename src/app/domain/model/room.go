@@ -29,6 +29,15 @@ func (r *Room) SetQuestions(questions []*Question) {
 	r.questions = questions
 }
 
+func (r *Room) GetQuestion(name string) *Question {
+	for _, q := range r.questions {
+		if q.Name == name {
+			return q
+		}
+	}
+	return nil
+}
+
 func (r *Room) Accept(player *Player) (int, error) {
 	if len(r.GetPlayers()) > 2 {
 		return -1, fmt.Errorf("This room is full.")
