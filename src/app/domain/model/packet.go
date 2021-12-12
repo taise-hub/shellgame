@@ -12,5 +12,7 @@ type TransmissionPacket struct {
 	Type     	  string
 	Personally    bool
 	CommandResult *CommandResult
+	Correct		  bool
+	Complete	  bool
 	Tick          int
 }
