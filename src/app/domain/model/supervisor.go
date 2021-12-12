@@ -46,7 +46,7 @@ func (spv *Supervisor) SetRoom(name string, room *Room) {
 	return
 }
 
-func (spv *Supervisor) CreateRoom(name string) *Room {
+func (spv *Supervisor) NewRoom(name string) *Room {
 	room := NewRoom(name)
 	spv.SetRoom(room.Name, room)
 	return room
