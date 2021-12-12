@@ -6,4 +6,5 @@ import (
 
 type QuestionRepository interface {
 	FindById(string) (*model.Question, error)
+	SelectRandom(int) ([]*model.Question, error)
 }

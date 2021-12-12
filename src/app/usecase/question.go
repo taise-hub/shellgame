@@ -26,3 +26,11 @@ func (uc *questionUsecase) FindById(identifier string) (question *model.Question
 	}
 	return
 }
+
+func (uc *questionUsecase) SelectRandom(num int) (questions []*model.Question, err error) {
+	questions, err = uc.repo.SelectRandom(num)
+	if err != nil {
+		return
+	}
+	return
+}

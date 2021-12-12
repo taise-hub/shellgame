@@ -12,10 +12,10 @@ func NewQuestionRepository(handler SqlHandler) *QuestionRepository {
 	return &QuestionRepository {
 		handler,
 	}
-} 
+}
 
 func (repo *QuestionRepository) FindById(identifier string) (question *model.Question, err error) {
-	row, err := repo.SqlHandler.Query("SELECT * FROM questions WHERE id = ?", identifier)
+	row, err := repo.SqlHandler.Query("SELECT * FROM `questions` WHERE id = ?", identifier)
 	if err != nil {
 		return
 	}
@@ -23,15 +23,34 @@ func (repo *QuestionRepository) FindById(identifier string) (question *model.Que
 	var (
 		id         uint
 		name       string
-		difficulty string
 		answer     string
-		score      int
 	)
 	row.Next()
-	err = row.Scan(&id, &name, &difficulty, &answer, &score)
+	err = row.Scan(&id, &name, &answer)
 	if err != nil {
 		return
 	}
-	question = model.NewQuestion(id, name, difficulty, answer, score)
+	question = model.NewQuestion(id, name, answer)
+	return
+}
+
+func (repo *QuestionRepository) SelectRandom(num int) (questions []*model.Question, err error) {
+	rows, err := repo.SqlHandler.Query("SELECT * FROM `questions` ORDER BY RAND() LIMIT ?", num)
+	if err != nil {
+		return 
+	}
+	defer rows.Close()
+	var (
+		id         uint
+		name       string
+		answer     string
+	)
+	for rows.Next() {
+		err = rows.Scan(&id, &name, &answer)
+		if err != nil {
+			return
+		}
+		questions = append(questions,  model.NewQuestion(id, name, answer))
+	}
 	return
 }
