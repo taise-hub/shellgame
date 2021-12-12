@@ -8,7 +8,6 @@ import (
 	"github.com/taise-hub/shellgame/src/app/interfaces/database"
 	"github.com/taise-hub/shellgame/src/app/interfaces/websocket"
 	"github.com/taise-hub/shellgame/src/app/interfaces/container"
-	"github.com/taise-hub/shellgame/src/app/usecase"
 	"github.com/taise-hub/shellgame/src/app/domain/service"
 )
 
@@ -26,17 +25,14 @@ type BattleController interface {
 
 type battleController struct {
 	battleService	 service.BattleService
-	questionUsecase  usecase.QuestionUsecase
 }
 
 func NewBattleController(sqlHandler database.SqlHandler, containerHandler container.ContainerHandler, webSocketHandler websocket.WebSocketHandler) BattleController {
 	return &battleController {
 		battleService: service.NewBattleService(
+			database.NewQuestionRepository(sqlHandler),
 			websocket.NewWebSocketRepository(webSocketHandler),
-			service.NewContainerService(container.NewContainerRepository(containerHandler)),
-		),
-		questionUsecase: usecase.NewQuestionUsecase(
-			database.NewQuestionRepository(sqlHandler)),
+			service.NewContainerService(container.NewContainerRepository(containerHandler))),
 	}
 }
 

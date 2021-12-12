@@ -16,12 +16,14 @@ type BattleService interface {
 }
 
 type battleService struct {
+	questionRepo  repository.QuestionRepository
 	socketRepo    repository.WebSocketRepository
-	containerSvc ContainerService
+	containerSvc  ContainerService
 }
 
-func NewBattleService(socketRepo repository.WebSocketRepository, containerSvc ContainerService) BattleService {
+func NewBattleService(questionRepo repository.QuestionRepository, socketRepo repository.WebSocketRepository, containerSvc ContainerService) BattleService {
 	return &battleService{
+		questionRepo: questionRepo,
 		socketRepo: socketRepo,
 		containerSvc: containerSvc,
 	}
@@ -35,17 +37,18 @@ func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) 
 	if supervisor.HasRoom(name) {
 		return supervisor.GetRoom(name)
 	}
-	room := supervisor.CreateRoom(name)
+	room := supervisor.NewRoom(name)
+	// DBから問題をランダムに3つ取ってくる。
+	questions, _ := svc.questionRepo.SelectRandom(3)
+	println(questions[0].Name, questions[0].Answer)
+	room.SetQuestions(questions)
 	return room
 }
 
 
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) error {
 	room := svc.createRoom(roomName, model.GetSupervisor())
-	num, err := room.Accept(player)
-	if err != nil {
-		return err
-	}
+	num, _ := room.Accept(player)
 	if num == 2 {
 		go room.Hub()
 	}
