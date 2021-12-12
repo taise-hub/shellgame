@@ -11,6 +11,7 @@ type BattleService interface {
 	ParticipateIn(*model.Player, string) error
 	Receiver(*model.Player)
 	Sender(*model.Player)
+	CanCreateRoom(string) bool
 	StartSignalSender(*model.Player, string)
 }
 
@@ -30,6 +31,15 @@ func (svc *battleService) Start(name string) error {
 	return svc.containerSvc.Start(name)
 }
 
+func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) *model.Room {
+	if supervisor.HasRoom(name) {
+		return supervisor.GetRoom(name)
+	}
+	room := supervisor.CreateRoom(name)
+	return room
+}
+
+
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) error {
 	room := svc.createRoom(roomName, model.GetSupervisor())
 	num, err := room.Accept(player)
@@ -43,12 +53,12 @@ func (svc *battleService) ParticipateIn(player *model.Player, roomName string) e
 	return nil
 }
 
-func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) *model.Room {
-	if supervisor.HasRoom(name) {
-		return supervisor.GetRoom(name)
+func (svc *battleService) CanCreateRoom(name string) bool {
+	room := model.GetSupervisor().GetRoom(name)
+	if room == nil || len(room.GetPlayers()) < 2 {
+		return true
 	}
-	room := supervisor.CreateRoom(name)
-	return room
+	return false
 }
 
 

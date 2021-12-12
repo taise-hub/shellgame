@@ -55,8 +55,14 @@ func (ctrl *battleController) New(c Context) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 
-	session.Set("player", c.PostForm("name"))
-	session.Set("room", c.PostForm("room"))
+	playerName := c.PostForm("name")
+	roomName := c.PostForm("room")
+	if !ctrl.battleService.CanCreateRoom(roomName) {
+		ctrl.Error400(c)
+		return
+	}
+	session.Set("player", playerName)
+	session.Set("room", roomName)
 	if err := session.Save(); err != nil {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
 		ctrl.Error500(c, err.Error())
