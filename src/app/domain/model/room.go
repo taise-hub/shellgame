@@ -8,7 +8,7 @@ import (
 type Room struct {
 	Name			 string
 	players          []*Player
-	questions		 []string
+	questions		 []*Question
 
 	PacketChannel      chan TransmissionPacket
 }
@@ -23,6 +23,10 @@ func NewRoom(name string) *Room {
 
 func (r *Room) GetPlayers() []*Player {
 	return r.players
+}
+
+func (r *Room) SetQuestions(questions []*Question) {
+	r.questions = questions
 }
 
 func (r *Room) Accept(player *Player) (int, error) {
