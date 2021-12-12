@@ -11,6 +11,7 @@ type RecievePacket struct {
 type TransmissionPacket struct {
 	Type     	  string
 	Personally    bool
+	Questions	  []string
 	CommandResult *CommandResult
 	Correct		  bool
 	Complete	  bool

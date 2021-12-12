@@ -25,6 +25,13 @@ func (r *Room) GetPlayers() []*Player {
 	return r.players
 }
 
+func (r *Room) GetQuestionNames() (qns []string) {
+	for _, q := range r.questions {
+		qns = append(qns, q.Name)
+	}
+	return
+}
+
 func (r *Room) SetQuestions(questions []*Question) {
 	r.questions = questions
 }

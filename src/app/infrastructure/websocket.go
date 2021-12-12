@@ -44,6 +44,7 @@ func (h *WebSocketHandler) Read(conn model.Connection, v interface{}) error {
 	mu := new(sync.Mutex)
 	mu.Lock()
 	defer mu.Unlock()
+	println("READJSON()")
 	err := conn.ReadJSON(v)
 	if err != nil {
 		conn.SetWriteDeadline(time.Now().Add(writeWait))
