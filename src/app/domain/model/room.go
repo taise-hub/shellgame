@@ -49,6 +49,10 @@ func (r *Room) Hub() {
 			elapsed := int(time.Since(begin).Seconds())
 			// 5 minitues elapsed
 			if elapsed > 300 {
+				// 終了通知
+				// supervisorからこのroomを削除する。
+				supervisor := GetSupervisor()
+				delete(supervisor.GetRooms(), r.Name)
 				return
 			}
 			packet := new(TransmissionPacket)
