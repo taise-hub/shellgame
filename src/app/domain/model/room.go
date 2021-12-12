@@ -16,6 +16,7 @@ type Room struct {
 func NewRoom(name string) *Room {
 	return &Room {
 		Name: name,
+		players:       make([]*Player, 0, 2),
 		PacketChannel: make(chan TransmissionPacket),
 	}
 }
@@ -24,12 +25,12 @@ func (r *Room) GetPlayers() []*Player {
 	return r.players
 }
 
-func (r *Room) Accept(player *Player) error {
+func (r *Room) Accept(player *Player) (int, error) {
 	if len(r.GetPlayers()) > 2 {
-		return fmt.Errorf("This room is full.")
+		return -1, fmt.Errorf("This room is full.")
 	}
 	r.players = append(r.players, player)
-	return nil
+	return len(r.players), nil
 }
 
 func (r *Room) Hub() {

@@ -27,9 +27,6 @@ func GetSignalSupervisor() *Supervisor {
 	return signalSupervisor
 }
 
-// func GetPreSupervisor() *Supervisor {
-// 	return preSupervisor
-// }
 
 func (spv *Supervisor) HasRoom(name string) bool {
 	 _, exist := spv.rooms[name]

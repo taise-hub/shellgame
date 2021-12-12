@@ -8,7 +8,7 @@ import (
 
 type BattleService interface {
 	Start(string) error
-	ParticipateIn(*model.Player, string)
+	ParticipateIn(*model.Player, string) error
 	Receiver(*model.Player)
 	Sender(*model.Player)
 	StartSignalSender(*model.Player, string)
@@ -30,20 +30,24 @@ func (svc *battleService) Start(name string) error {
 	return svc.containerSvc.Start(name)
 }
 
-func (svc *battleService) ParticipateIn(player *model.Player, roomName string) {
+func (svc *battleService) ParticipateIn(player *model.Player, roomName string) error {
 	room := svc.createRoom(roomName, model.GetSupervisor())
-	room.Accept(player)
+	num, err := room.Accept(player)
+	if err != nil {
+		return err
+	}
+	if num == 2 {
+		go room.Hub()
+	}
 	player.SetRoom(room)
+	return nil
 }
 
 func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) *model.Room {
 	if supervisor.HasRoom(name) {
 		return supervisor.GetRoom(name)
-		// room := supervisor.GetRoom(name)
-		// go room.Hub()
 	}
 	room := supervisor.CreateRoom(name)
-	go room.Hub()
 	return room
 }
 
@@ -93,13 +97,11 @@ func (svc *battleService) Sender(player *model.Player) {
 
 func (svc *battleService) StartSignalSender(player *model.Player, roomName string){
 	room := svc.createRoom(roomName, model.GetSignalSupervisor())
-	room.Accept(player)
+	num, _ := room.Accept(player)
 	player.SetRoom(room)
-	go func() {
-		<- player.Message
-		svc.socketRepo.Write(player.Conn, struct{}{})
-	}()
-	if len(room.GetPlayers()) == 2 {
-		room.PacketChannel <- *new(model.TransmissionPacket)
+	if num == 2 {
+		for _, player := range room.GetPlayers() {
+			svc.socketRepo.Write(player.Conn, struct{}{})
+		}
 	}
 }

@@ -20,7 +20,6 @@ type BattleController interface {
 	Wait(Context)
 	WsWait(Context, model.Connection)
 	WsBattle(Context, model.Connection)
-
 	Error500(Context, string)
 	Error400(Context)
 }
@@ -81,10 +80,7 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
 	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
-	err := ctrl.battleService.Start(player.ID)
-	if err != nil {
-		ctrl.Error500(c, err.Error())
-	}
+	ctrl.battleService.Start(player.ID)
 	ctrl.battleService.ParticipateIn(player, roomName)
 	go ctrl.battleService.Receiver(player)
 	go ctrl.battleService.Sender(player)

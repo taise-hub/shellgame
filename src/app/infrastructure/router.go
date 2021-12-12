@@ -25,6 +25,7 @@ func Router() {
 		{
 			battle.GET("/start", func(c *gin.Context) { controller.Start(c) })
 			battle.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
+			// battle.GET("/redirect", func(c *gin.Context) { controller.Redirect(c) })
 			battle.GET("/wswait", func(c *gin.Context) { 
 				conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 				if err != nil {
