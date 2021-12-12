@@ -20,9 +20,10 @@ conn.onmessage = function(event){
             setQuestion(response.QuestionNumebers)
             break;
         case 'tick':
-            // if (response.IsTimeUp) {
-            //     alert("timeup!!")
-            // }
+            if (response.Tick === 300 ) {
+                alert("")
+                // TODO: 勝者の判定
+            }
             elem = document.getElementById("elapsed-seconds");
             elem.innerText = response.Tick;
             return
@@ -35,17 +36,21 @@ conn.onmessage = function(event){
                 switchConsoleRight(response);
             }
             break;
-        case 'score':
+        case 'answer':
             if (response.Personally) {
-                var score = document.getElementById("myScore");
-                score.value = response.Score;
+                var score = document.getElementById("myScore"); 
+                if (response.Correct) {
+                    score.value += 100/3
+                }
             }
             else {
                 var score = document.getElementById("opScore");
-                score.value = response.Score; 
+                if (response.Correct) {
+                    score.value += 100/3
+                }
             }            
-            if (response.Judgement) {
-                (response.Owner? alert("win!!"): alert("loose..."));
+            if (response.Complete) {
+                (response.Owner? alert("勝ちっちの〜ち！"): alert("ん〜〜〜負け！！！"));
             }
     }
 }
@@ -222,14 +227,10 @@ function requestAnswer() {
     var qname = document.getElementById("qname").value;
     var answer = document.getElementById("answer").value;
     var msg = {
-        DataType: "score",
-        AnswerReq: {
-            Name: qname,
-            Answer: answer,
-        },
-        Cmd: null,
+        Type: "answer",
+        AnswerName: qname,
+        Answer: answer,
     };
-
     conn.send(JSON.stringify(msg));
     return;
 
