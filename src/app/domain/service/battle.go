@@ -38,9 +38,7 @@ func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) 
 		return supervisor.GetRoom(name)
 	}
 	room := supervisor.NewRoom(name)
-	// DBから問題をランダムに3つ取ってくる。
 	questions, _ := svc.questionRepo.SelectRandom(3)
-	println(questions[0].Name, questions[0].Answer)
 	room.SetQuestions(questions)
 	return room
 }
@@ -71,6 +69,7 @@ func (svc *battleService) Receiver(player *model.Player) {
 		player.Done <- struct{}{}
 	}()
 	var received model.RecievePacket
+	room := player.GetRoom()
 	for {
 		err := svc.socketRepo.Read(player.Conn, &received)
 		if err != nil { // Most of the time, it's "1001 going away."
@@ -80,13 +79,25 @@ func (svc *battleService) Receiver(player *model.Player) {
 		player.Personally = true
 		switch received.Type {
 		case "command":
-			command := *received.Command
-			result, _ := svc.containerSvc.Execute(command, player.ID)
 			packet := new(model.TransmissionPacket)
 			packet.Type = "command"
+			command := *received.Command
+			result, _ := svc.containerSvc.Execute(command, player.ID)
 			packet.CommandResult = result
-			player.GetRoom().PacketChannel <- *packet
-		case "score":
+			room.PacketChannel <- *packet
+		case "answer":
+			packet := new(model.TransmissionPacket)
+			packet.Type = "answer"
+			q := room.GetQuestion(*received.AnswerName)
+			if q  == nil || player.IsAnswered(q.Name) {
+				continue
+			}
+			if q.Answer == *received.Answer { // answer is correct
+				player.SetAnswered(q.Name)
+				packet.Correct = true
+				packet.Complete = player.IsAnsweredAll()
+			}
+			room.PacketChannel <- *packet
 			break
 		}
 	}
