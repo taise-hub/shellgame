@@ -11,11 +11,11 @@ import (
 
 var (
 	conf  = &Config{
-		User:     getenv("MYSQL_USER", "edush"),
+		User:     getenv("MYSQL_USER", "shellgame"),
 		Password: getenv("MYSQL_PASSWORD", "password"),
 		Server:   getenv("MYSQL_HOST", "127.0.0.1"),
 		Port:     3306,
-		DBName:   getenv("MYSQL_DATABASE", "edush"),
+		DBName:   getenv("MYSQL_DATABASE", "shellgame"),
 	}
 )
 
