@@ -6,16 +6,16 @@ import (
 )
 
 type Room struct {
-	Name			 string
-	players          []*Player
-	questions		 []*Question
+	Name      string
+	players   []*Player
+	questions []*Question
 
-	PacketChannel      chan TransmissionPacket
+	PacketChannel chan TransmissionPacket
 }
 
 func NewRoom(name string) *Room {
-	return &Room {
-		Name: name,
+	return &Room{
+		Name:          name,
 		players:       make([]*Player, 0, 2),
 		PacketChannel: make(chan TransmissionPacket),
 	}
@@ -59,9 +59,9 @@ func (r *Room) Hub() {
 		ticker.Stop()
 	}()
 
-	for begin := time.Now();; {
+	for begin := time.Now(); ; {
 		select {
-		case packet := <- r.PacketChannel:
+		case packet := <-r.PacketChannel:
 			for _, player := range r.players {
 				player.Message <- packet
 			}
@@ -76,7 +76,7 @@ func (r *Room) Hub() {
 				return
 			}
 			packet := new(TransmissionPacket)
-			packet.Type = "tick"	 
+			packet.Type = "tick"
 			packet.Tick = elapsed
 			for _, player := range r.players {
 				player.Message <- *packet

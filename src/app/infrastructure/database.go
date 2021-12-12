@@ -1,16 +1,16 @@
 package infrastructure
 
 import (
-	"log"
-	"fmt"
-	"os"
 	"database/sql"
-	_  "github.com/go-sql-driver/mysql"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/taise-hub/shellgame/src/app/interfaces/database"
+	"log"
+	"os"
 )
 
 var (
-	conf  = &Config{
+	conf = &Config{
 		User:     getenv("MYSQL_USER", "shellgame"),
 		Password: getenv("MYSQL_PASSWORD", "password"),
 		Server:   getenv("MYSQL_HOST", "127.0.0.1"),

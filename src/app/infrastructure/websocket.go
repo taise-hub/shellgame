@@ -1,10 +1,10 @@
 package infrastructure
 
 import (
-	"github.com/taise-hub/shellgame/src/app/domain/model"
-	"time"
-	"sync"
 	"github.com/gorilla/websocket"
+	"github.com/taise-hub/shellgame/src/app/domain/model"
+	"sync"
+	"time"
 )
 
 const (
@@ -48,7 +48,7 @@ func (h *WebSocketHandler) Read(conn model.Connection, v interface{}) error {
 	err := conn.ReadJSON(v)
 	if err != nil {
 		conn.SetWriteDeadline(time.Now().Add(writeWait))
-		if websocket.IsUnexpectedCloseError(err, websocket.CloseAbnormalClosure){
+		if websocket.IsUnexpectedCloseError(err, websocket.CloseAbnormalClosure) {
 			return err
 		}
 	}

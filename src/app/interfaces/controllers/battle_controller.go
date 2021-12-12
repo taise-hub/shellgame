@@ -1,14 +1,14 @@
 package controller
 
 import (
-	"github.com/taise-hub/shellgame/src/app/domain/model"
-	"log"
 	"fmt"
 	"github.com/gin-contrib/sessions"
+	"github.com/taise-hub/shellgame/src/app/domain/model"
+	"github.com/taise-hub/shellgame/src/app/domain/service"
+	"github.com/taise-hub/shellgame/src/app/interfaces/container"
 	"github.com/taise-hub/shellgame/src/app/interfaces/database"
 	"github.com/taise-hub/shellgame/src/app/interfaces/websocket"
-	"github.com/taise-hub/shellgame/src/app/interfaces/container"
-	"github.com/taise-hub/shellgame/src/app/domain/service"
+	"log"
 )
 
 type BattleController interface {
@@ -24,11 +24,11 @@ type BattleController interface {
 }
 
 type battleController struct {
-	battleService	 service.BattleService
+	battleService service.BattleService
 }
 
 func NewBattleController(sqlHandler database.SqlHandler, containerHandler container.ContainerHandler, webSocketHandler websocket.WebSocketHandler) BattleController {
-	return &battleController {
+	return &battleController{
 		battleService: service.NewBattleService(
 			database.NewQuestionRepository(sqlHandler),
 			websocket.NewWebSocketRepository(webSocketHandler),
@@ -81,7 +81,7 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
-	player := model.NewPlayer(fmt.Sprintf("%s_%s",roomName, playerName), conn)
+	player := model.NewPlayer(fmt.Sprintf("%s_%s", roomName, playerName), conn)
 	ctrl.battleService.Start(player.ID)
 	ctrl.battleService.ParticipateIn(player, roomName)
 	go ctrl.battleService.Receiver(player)

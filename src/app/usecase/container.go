@@ -16,7 +16,7 @@ type containerUsecase struct {
 }
 
 func NewContainerUsecase(svc service.ContainerService) ContainerUsecase {
-	return &containerUsecase {
+	return &containerUsecase{
 		svc: svc,
 	}
 }

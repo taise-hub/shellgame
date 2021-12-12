@@ -9,7 +9,7 @@ type QuestionRepository struct {
 }
 
 func NewQuestionRepository(handler SqlHandler) *QuestionRepository {
-	return &QuestionRepository {
+	return &QuestionRepository{
 		handler,
 	}
 }
@@ -21,9 +21,9 @@ func (repo *QuestionRepository) FindById(identifier string) (question *model.Que
 	}
 	defer row.Close()
 	var (
-		id         uint
-		name       string
-		answer     string
+		id     uint
+		name   string
+		answer string
 	)
 	row.Next()
 	err = row.Scan(&id, &name, &answer)
@@ -37,20 +37,20 @@ func (repo *QuestionRepository) FindById(identifier string) (question *model.Que
 func (repo *QuestionRepository) SelectRandom(num int) (questions []*model.Question, err error) {
 	rows, err := repo.SqlHandler.Query("SELECT * FROM `questions` ORDER BY RAND() LIMIT ?", num)
 	if err != nil {
-		return 
+		return
 	}
 	defer rows.Close()
 	var (
-		id         uint
-		name       string
-		answer     string
+		id     uint
+		name   string
+		answer string
 	)
 	for rows.Next() {
 		err = rows.Scan(&id, &name, &answer)
 		if err != nil {
 			return
 		}
-		questions = append(questions,  model.NewQuestion(id, name, answer))
+		questions = append(questions, model.NewQuestion(id, name, answer))
 	}
 	return
 }

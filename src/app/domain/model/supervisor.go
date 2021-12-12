@@ -2,7 +2,7 @@ package model
 
 var (
 	signalSupervisor *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
-	supervisor *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
+	supervisor       *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
 )
 
 // A supervisor manage battle room.
@@ -10,6 +10,7 @@ var (
 type Supervisor struct {
 	rooms map[string]*Room
 }
+
 // type Supervisor struct {
 // 	rooms []Hoge
 // }
@@ -27,10 +28,9 @@ func GetSignalSupervisor() *Supervisor {
 	return signalSupervisor
 }
 
-
 func (spv *Supervisor) HasRoom(name string) bool {
-	 _, exist := spv.rooms[name]
-	 return exist
+	_, exist := spv.rooms[name]
+	return exist
 }
 
 func (spv *Supervisor) GetRooms() map[string]*Room {

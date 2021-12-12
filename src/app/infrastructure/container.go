@@ -7,6 +7,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
+
 type ContainerHandler struct {
 	Client *client.Client
 }
@@ -20,7 +21,6 @@ func NewContainerHandler() *ContainerHandler {
 	handler.Client = cli
 	return handler
 }
-
 
 func (h *ContainerHandler) Exists(name string) bool {
 	_, err := h.Client.ContainerInspect(context.Background(), name)
@@ -50,12 +50,12 @@ func (h *ContainerHandler) Create(name string) (id string, err error) {
 		return
 	}
 	id = body.ID
-	return 
+	return
 }
 
 // remove container
 func (h *ContainerHandler) Remove(id string) error {
-	option := types.ContainerRemoveOptions {
+	option := types.ContainerRemoveOptions{
 		RemoveVolumes: true,
 		RemoveLinks:   true,
 		Force:         true,
@@ -64,7 +64,7 @@ func (h *ContainerHandler) Remove(id string) error {
 }
 
 // execute command on container
-func (h *ContainerHandler) Execute(cmd string, container string)(*bufio.Reader, error) {
+func (h *ContainerHandler) Execute(cmd string, container string) (*bufio.Reader, error) {
 	cmds := []string{"/bin/bash", "-c", cmd}
 	ec := &types.ExecConfig{
 		AttachStdout: true,

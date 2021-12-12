@@ -4,13 +4,12 @@ import (
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 )
 
-
 type WebSocketRepository struct {
 	WebSocketHandler
 }
 
 func NewWebSocketRepository(handler WebSocketHandler) *WebSocketRepository {
-	return &WebSocketRepository {
+	return &WebSocketRepository{
 		handler,
 	}
 }

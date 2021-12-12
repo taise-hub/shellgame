@@ -1,11 +1,11 @@
 package infrastructure
 
 import (
-	"net/http"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	controller "github.com/taise-hub/shellgame/src/app/interfaces/controllers"
+	"net/http"
 )
 
 func Router() {
@@ -25,7 +25,7 @@ func Router() {
 		{
 			battle.GET("/start", func(c *gin.Context) { controller.Start(c) })
 			battle.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
-			battle.GET("/wswait", func(c *gin.Context) { 
+			battle.GET("/wswait", func(c *gin.Context) {
 				conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 				if err != nil {
 					controller.Error500(c, err.Error())
@@ -38,7 +38,7 @@ func Router() {
 					controller.Error500(c, err.Error())
 				}
 				controller.WsBattle(c, conn)
-			 })
+			})
 		}
 	}
 	r.Run(":8080")
@@ -49,7 +49,7 @@ func hasSession() gin.HandlerFunc {
 		if sessions.Default(c).Get("player") == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "nosession"})
 			return
-		} 
+		}
 		c.Next()
 	}
 }

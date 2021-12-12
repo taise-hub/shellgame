@@ -2,9 +2,9 @@ package container
 
 import (
 	"bytes"
-	"io/ioutil"
 	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
+	"io/ioutil"
 )
 
 type ContainerRepository struct {
@@ -12,10 +12,10 @@ type ContainerRepository struct {
 }
 
 func NewContainerRepository(handler ContainerHandler) *ContainerRepository {
-	return &ContainerRepository {
-			handler,
+	return &ContainerRepository{
+		handler,
 	}
-} 
+}
 
 func (repo *ContainerRepository) Exists(name string) bool {
 	return repo.ContainerHandler.Exists(name)
@@ -55,9 +55,9 @@ func (repo *ContainerRepository) Execute(cmd string, container string) (*model.C
 		return nil, err
 	}
 	commandResult := new(model.CommandResult)
-	commandResult.Command  = cmd
-	commandResult.StdOut   = stdout
-	commandResult.StdErr   = stderr
+	commandResult.Command = cmd
+	commandResult.StdOut = stdout
+	commandResult.StdErr = stderr
 
 	return commandResult, nil
 }

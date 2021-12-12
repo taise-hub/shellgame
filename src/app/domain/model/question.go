@@ -7,9 +7,9 @@ type Question struct {
 }
 
 func NewQuestion(id uint, name string, answer string) *Question {
-	return &Question {
-		ID: id,
-		Name: name,
+	return &Question{
+		ID:     id,
+		Name:   name,
 		Answer: answer,
 	}
 }

@@ -1,22 +1,22 @@
 package model
 
 type Player struct {
-	ID 			 string //room.ID + name
-	questions    map[string]bool //Answered or not
-	Conn         Connection
-	room         *Room
-	Message      chan TransmissionPacket
-	Done		 chan struct{}
-	Personally   bool
+	ID         string          //room.ID + name
+	questions  map[string]bool //Answered or not
+	Conn       Connection
+	room       *Room
+	Message    chan TransmissionPacket
+	Done       chan struct{}
+	Personally bool
 }
 
 func NewPlayer(id string, conn Connection) *Player {
 	return &Player{
-		ID: id,
+		ID:        id,
 		questions: make(map[string]bool),
-		Conn: conn,
-		Done: make(chan struct{}),
-		Message: make(chan TransmissionPacket),
+		Conn:      conn,
+		Done:      make(chan struct{}),
+		Message:   make(chan TransmissionPacket),
 	}
 }
 
@@ -48,6 +48,6 @@ func (p *Player) IsAnsweredAll() bool {
 			return false
 		}
 	}
-	// All the questions is answered 
+	// All the questions is answered
 	return true
 }

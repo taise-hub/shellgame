@@ -1,9 +1,9 @@
 package service
 
 import (
-	"log"
-	"github.com/taise-hub/shellgame/src/app/domain/repository"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
+	"github.com/taise-hub/shellgame/src/app/domain/repository"
+	"log"
 )
 
 type BattleService interface {
@@ -16,15 +16,15 @@ type BattleService interface {
 }
 
 type battleService struct {
-	questionRepo  repository.QuestionRepository
-	socketRepo    repository.WebSocketRepository
-	containerSvc  ContainerService
+	questionRepo repository.QuestionRepository
+	socketRepo   repository.WebSocketRepository
+	containerSvc ContainerService
 }
 
 func NewBattleService(questionRepo repository.QuestionRepository, socketRepo repository.WebSocketRepository, containerSvc ContainerService) BattleService {
 	return &battleService{
 		questionRepo: questionRepo,
-		socketRepo: socketRepo,
+		socketRepo:   socketRepo,
 		containerSvc: containerSvc,
 	}
 }
@@ -44,7 +44,6 @@ func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) 
 	room.SetQuestions(questions)
 	return room
 }
-
 
 func (svc *battleService) Start(name string) error {
 	return svc.containerSvc.Start(name)
@@ -67,7 +66,6 @@ func (svc *battleService) CanCreateRoom(name string) bool {
 	}
 	return false
 }
-
 
 func (svc *battleService) Receiver(player *model.Player) {
 	defer func() {
@@ -93,7 +91,7 @@ func (svc *battleService) Receiver(player *model.Player) {
 		case "answer":
 			packet := svc.buildPacket("answer")
 			q := room.GetQuestion(*received.AnswerName)
-			if q  == nil || player.IsAnswered(q.Name) {
+			if q == nil || player.IsAnswered(q.Name) {
 				continue
 			}
 			if q.Answer == *received.Answer { // answer is correct
@@ -116,9 +114,9 @@ func (svc *battleService) Sender(player *model.Player) {
 	svc.socketRepo.Write(player.Conn, packet)
 	for {
 		select {
-		case <- player.Done:
+		case <-player.Done:
 			return
-		case packet := <- player.Message:
+		case packet := <-player.Message:
 			packet.Personally = player.Personally
 			svc.socketRepo.Write(player.Conn, packet)
 		}
@@ -126,7 +124,7 @@ func (svc *battleService) Sender(player *model.Player) {
 	}
 }
 
-func (svc *battleService) StartSignalSender(player *model.Player, roomName string){
+func (svc *battleService) StartSignalSender(player *model.Player, roomName string) {
 	room := svc.createRoom(roomName, model.GetSignalSupervisor())
 	num, _ := room.Accept(player)
 	player.SetRoom(room)

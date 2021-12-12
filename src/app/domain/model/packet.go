@@ -1,19 +1,18 @@
 package model
 
-
 type RecievePacket struct {
-	Type	    string
+	Type       string
 	AnswerName *string
-	Answer	   *string
+	Answer     *string
 	Command    *string
 }
 
 type TransmissionPacket struct {
-	Type     	  string
+	Type          string
 	Personally    bool
-	Questions	  []string
+	Questions     []string
 	CommandResult *CommandResult
-	Correct		  bool
-	Complete	  bool
+	Correct       bool
+	Complete      bool
 	Tick          int
 }

@@ -14,7 +14,7 @@ type questionUsecase struct {
 }
 
 func NewQuestionUsecase(repo repository.QuestionRepository) QuestionUsecase {
-	return &questionUsecase {
+	return &questionUsecase{
 		repo: repo,
 	}
 }
