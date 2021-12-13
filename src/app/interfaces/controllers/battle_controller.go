@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/taise-hub/shellgame/src/app/usecase"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
@@ -24,15 +25,17 @@ type BattleController interface {
 }
 
 type battleController struct {
-	battleService service.BattleService
+	uc usecase.BattleUsecase
 }
 
 func NewBattleController(sqlHandler database.SqlHandler, containerHandler container.ContainerHandler, webSocketHandler websocket.WebSocketHandler) BattleController {
 	return &battleController{
-		battleService: service.NewBattleService(
+		uc: usecase.NewBattleUsecase(
+			service.NewBattleService(
 			database.NewQuestionRepository(sqlHandler),
 			websocket.NewWebSocketRepository(webSocketHandler),
 			service.NewContainerService(container.NewContainerRepository(containerHandler))),
+		),
 	}
 }
 
@@ -53,7 +56,7 @@ func (ctrl *battleController) New(c Context) {
 
 	playerName := c.PostForm("name")
 	roomName := c.PostForm("room")
-	if !ctrl.battleService.CanCreateRoom(roomName) {
+	if !ctrl.uc.CanCreateRoom(roomName) {
 		ctrl.Error400(c)
 		return
 	}
@@ -82,10 +85,10 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
 	player := model.NewPlayer(fmt.Sprintf("%s_%s", roomName, playerName), conn)
-	ctrl.battleService.Start(player.ID)
-	ctrl.battleService.ParticipateIn(player, roomName)
-	go ctrl.battleService.Receiver(player)
-	go ctrl.battleService.Sender(player)
+	ctrl.uc.Start(player.ID)
+	ctrl.uc.ParticipateIn(player, roomName)
+	go ctrl.uc.Receiver(player)
+	go ctrl.uc.Sender(player)
 }
 
 func (ctrl *battleController) Error500(c Context, err string) {
@@ -102,5 +105,5 @@ func (ctrl *battleController) WsWait(c Context, conn model.Connection) {
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
 	player := model.NewPlayer(playerName, conn)
-	ctrl.battleService.StartSignalSender(player, roomName)
+	ctrl.uc.StartSignalSender(player, roomName)
 }
