@@ -2,13 +2,13 @@ var url = 'ws://'+document.location.host + "/battle/ws";
 var conn = new WebSocket(url);
 
 // 自分のディレクトリ情報
-var leftCurrentDir = "/home/sechacker";
+var leftCurrentDir = "/home/player";
 var leftPreviousDir = "";
-var leftDefaultDir = "/home/sechacker";
+var leftDefaultDir = "/home/player";
 //　対戦相手のディレクトリ情報
-var rightCurrentDir = "/home/sechacker";
+var rightCurrentDir = "/home/player";
 var rightPreviousDir = "";
-var rightDefaultDir = "/home/sechacker";
+var rightDefaultDir = "/home/player";
 var commandHistory = [];
 var currentCommand = 0;
 
@@ -20,12 +20,21 @@ conn.onmessage = function(event){
             setQuestion(response.Questions)
             break;
         case 'tick':
-            if (response.Tick === 300 ) {
-                alert("")
-                // TODO: 勝者の判定
-            }
             elem = document.getElementById("elapsed-seconds");
             elem.innerText = response.Tick;
+            if (response.Tick === 300 ) {
+                // TODO: 勝者の判定
+                alert("終了〜")
+                myScore = document.getElementById("myScore"); 
+                opScore =document.getElementById("opScore");
+                if (myScore.value === opScore.value) {
+                    alert("引き分け！！")
+                    return
+                }
+                winner = (myScore.value > opScore.value)? "あなた": "あいて";
+                alert(winner + "の勝ち")
+                return
+            }
             return
         case 'command':
             // 最初に自分のコマンドか相手のコマンドか判定して処理を変える。
@@ -50,7 +59,8 @@ conn.onmessage = function(event){
                 }
             }            
             if (response.Complete) {
-                (response.Owner? alert("勝ちっちの〜ち！"): alert("ん〜〜〜負け！！！"));
+                winner = response.Owner? "あなた": "あいて";
+                alert(winner + "の勝ち")
             }
     }
 }
@@ -240,7 +250,7 @@ function setQuestion(questions) {
     var questionlist = document.getElementById("question-list");
     for (const elem of questions) {
         q = document.createElement("li");
-        q.innerText = "/home/sechacker/" + elem;
+        q.innerText = "/home/player/questions/" + elem;
         questionlist.appendChild(q);
     }
 
