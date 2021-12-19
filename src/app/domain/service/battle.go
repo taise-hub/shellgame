@@ -119,8 +119,12 @@ func (svc *battleService) Sender(player *model.Player) {
 		case packet := <-player.Message:
 			packet.Personally = player.Personally
 			svc.socketRepo.Write(player.Conn, packet)
+			if packet.Type == "tick" {
+				break
+			}
+			player.Personally = false
+		default:
 		}
-		player.Personally = false
 	}
 }
 
