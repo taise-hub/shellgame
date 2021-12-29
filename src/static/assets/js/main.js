@@ -166,12 +166,12 @@ function switchConsoleRight(commandResponse) {
 function newLine(mode) {
     switch(mode) {
         case 'left':
-            var list = document.getElementsByClassName("terminal")[0];
+            var terminal = document.getElementsByClassName("terminal")[0];
             currentDir = leftCurrentDir;
             defaultDir = leftDefaultDir;
             break
         case 'right':
-            var list = document.getElementsByClassName("terminal")[1];
+            var terminal = document.getElementsByClassName("terminal")[1];
             currentDir = rightCurrentDir;
             defaultDir = rightDefaultDir;
             break
@@ -195,7 +195,10 @@ function newLine(mode) {
     li.appendChild(currentDirField);
     li.appendChild(markField);
     li.appendChild(input);
-    list.appendChild(li);
+    terminal.appendChild(li);
+    // 右ターミナルのスクロール
+    var inner = document.getElementsByClassName("split-right-inner")[0];
+    inner.scrollTop = inner.scrollHeight;
     if (mode=='right') {
         input.readOnly = true;
         return
