@@ -20,8 +20,8 @@ type BattleController interface {
 	Wait(Context)
 	WsWait(Context, model.Connection)
 	WsBattle(Context, model.Connection)
-	Error500(Context, string)
-	Error400(Context)
+	Error500(Context)
+	Error400(Context, string)
 }
 
 type battleController struct {
@@ -57,14 +57,14 @@ func (ctrl *battleController) New(c Context) {
 	playerName := c.PostForm("name")
 	roomName := c.PostForm("room")
 	if !ctrl.uc.CanCreateRoom(roomName) {
-		ctrl.Error400(c)
+		ctrl.Error400(c, "現在指定した部屋名が既に利用されています。")
 		return
 	}
 	session.Set("player", playerName)
 	session.Set("room", roomName)
 	if err := session.Save(); err != nil {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
-		ctrl.Error500(c, err.Error())
+		ctrl.Error500(c)
 	}
 	c.Redirect(302, "/battle/wait")
 }
@@ -91,12 +91,12 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	go ctrl.uc.Sender(player)
 }
 
-func (ctrl *battleController) Error500(c Context, err string) {
-	c.HTML(500, "500.html", err)
+func (ctrl *battleController) Error500(c Context) {
+	c.HTML(500, "500.html", nil)
 }
 
-func (ctrl *battleController) Error400(c Context) {
-	c.HTML(400, "400.html", nil)
+func (ctrl *battleController) Error400(c Context, err string) {
+	c.HTML(400, "400.html", err)
 }
 
 func (ctrl *battleController) WsWait(c Context, conn model.Connection) {
