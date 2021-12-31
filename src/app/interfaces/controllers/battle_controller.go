@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/taise-hub/shellgame/src/app/usecase"
 	"fmt"
+	"golang.org/x/exp/utf8string"
 	"github.com/gin-contrib/sessions"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 	"github.com/taise-hub/shellgame/src/app/domain/service"
@@ -56,6 +57,14 @@ func (ctrl *battleController) New(c Context) {
 
 	playerName := c.PostForm("name")
 	roomName := c.PostForm("room")
+	if playerName == "" || roomName == "" {
+		ctrl.Error400(c, "ニックネームまたは部屋名を入力してください。")
+		return
+	}
+	if !utf8string.NewString(playerName).IsASCII() || !utf8string.NewString(roomName).IsASCII() {
+		ctrl.Error400(c, "入力値は英数字でお願いします。")
+		return
+	}
 	if !ctrl.uc.CanCreateRoom(roomName) {
 		ctrl.Error400(c, "現在指定した部屋名が既に利用されています。")
 		return
