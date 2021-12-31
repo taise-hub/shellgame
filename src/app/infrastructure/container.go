@@ -41,9 +41,11 @@ func (h *ContainerHandler) Create(name string) (id string, err error) {
 	cc := &container.Config{
 		Image: "shellgame",
 		Tty:   true,
+		NetworkDisabled: true,
 	}
 	hc := &container.HostConfig{
 		AutoRemove: true,
+		NetworkMode: "none",
 	}
 	body, err := h.Client.ContainerCreate(context.Background(), cc, hc, nil, nil, name)
 	if err != nil {
