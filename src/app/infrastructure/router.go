@@ -28,14 +28,14 @@ func Router() {
 			battle.GET("/wswait", func(c *gin.Context) {
 				conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 				if err != nil {
-					controller.Error500(c, err.Error())
+					controller.Error500(c)
 				}
 				controller.WsWait(c, conn)
 			})
 			battle.GET("/ws", func(c *gin.Context) {
 				conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 				if err != nil {
-					controller.Error500(c, err.Error())
+					controller.Error500(c)
 				}
 				controller.WsBattle(c, conn)
 			})
