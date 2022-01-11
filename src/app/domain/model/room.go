@@ -9,6 +9,7 @@ type Room struct {
 	Name      string
 	players   []*Player
 	questions []*Question
+	createdAt time.Time
 
 	PacketChannel chan TransmissionPacket
 }
@@ -16,6 +17,7 @@ type Room struct {
 func NewRoom(name string) *Room {
 	return &Room{
 		Name:          name,
+		createdAt:	   time.Now(),
 		players:       make([]*Player, 0, 2),
 		PacketChannel: make(chan TransmissionPacket),
 	}
@@ -54,9 +56,9 @@ func (r *Room) Accept(player *Player) (int, error) {
 }
 
 func (r *Room) Hub() {
-	ticker := time.NewTicker(time.Second)
+	t := time.NewTicker(time.Second)
 	defer func() {
-		ticker.Stop()
+		t.Stop()
 	}()
 
 	for begin := time.Now(); ; {
@@ -65,14 +67,11 @@ func (r *Room) Hub() {
 			for _, player := range r.players {
 				player.Message <- packet
 			}
-		case <-ticker.C:
+		case <-t.C:
 			elapsed := int(time.Since(begin).Seconds())
 			// 5 minitues elapsed
 			if elapsed > 300 {
-				// 終了通知
-				// supervisorからこのroomを削除する。
-				supervisor := GetSupervisor()
-				delete(supervisor.GetRooms(), r.Name)
+				// 終了
 				return
 			}
 			packet := new(TransmissionPacket)
