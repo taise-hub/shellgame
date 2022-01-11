@@ -22,6 +22,7 @@ type battleService struct {
 }
 
 func NewBattleService(questionRepo repository.QuestionRepository, socketRepo repository.WebSocketRepository, containerSvc ContainerService) BattleService {
+	model.GetSupervisor().Manage() //start supervisor manager
 	return &battleService{
 		questionRepo: questionRepo,
 		socketRepo:   socketRepo,
@@ -51,6 +52,7 @@ func (svc *battleService) Start(name string) error {
 
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) error {
 	room := svc.createRoom(roomName, model.GetSupervisor())
+	log.Printf("%v\n", model.GetSupervisor().GetRooms())
 	num, _ := room.Accept(player)
 	if num == 2 {
 		go room.Hub()
