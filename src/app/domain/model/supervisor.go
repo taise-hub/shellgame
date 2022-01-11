@@ -1,5 +1,10 @@
 package model
 
+import (
+	"log"
+	"time"
+)
+
 var (
 	signalSupervisor *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
 	supervisor       *Supervisor = &Supervisor{rooms: make(map[string]*Room)}
@@ -50,4 +55,26 @@ func (spv *Supervisor) NewRoom(name string) *Room {
 	room := NewRoom(name)
 	spv.SetRoom(room.Name, room)
 	return room
+}
+
+// Delete rooms that have been created for 5 minutes.
+func (spv *Supervisor) Manage() {
+	go func() {
+		t := time.NewTicker(5 * time.Minute)
+		for {
+			select {
+			case <-t.C:
+				rooms := spv.GetRooms()
+				log.Println(rooms)
+				for name, room := range rooms {
+					duration := time.Now().Sub(room.createdAt).Minutes()
+					log.Println(duration)
+					if duration > 5 {
+						delete(rooms, name)
+					}
+				}
+			}
+		}
+		// t.Stop()
+	}()
 }
