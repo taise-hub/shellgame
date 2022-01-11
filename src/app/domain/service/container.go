@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
 	"github.com/taise-hub/shellgame/src/app/domain/repository"
 )
@@ -34,9 +35,9 @@ func (svc *containerService) start(name string) error {
 }
 
 func (svc *containerService) Start(name string) error {
+	// Return the error if the container with the same name exists.
 	if svc.repo.Exists(name) {
-		// return fmt.Errorf("Error: container '%s' is already exsits.", name)
-		return nil
+		return fmt.Errorf("Error: container '%s' is already exsits.", name)
 	}
 	err := svc.start(name)
 	if err != nil {
