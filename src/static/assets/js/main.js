@@ -77,7 +77,7 @@ window.addEventListener("keyup", function(e){
     if(e.code=="Enter") {
         rawCommand = document.getElementById("standard-input-left").value;
         var command;
-        if (rawCommand.endsWith(";")) {
+        if (rawCommand.endsWith(";") || rawCommand === "") {
             command = "cd " + leftCurrentDir + "; " + rawCommand + " pwd";
         }else {
             command = "cd " + leftCurrentDir + "; " + rawCommand + "; pwd";
@@ -139,6 +139,13 @@ function switchConsoleLeft(commandResponse) {
         item.innerText = parsedResponse[i];
         si.after(item);
     }
+    var parsedResponse = b64DecodeUnicode(commandResponse.CommandResult.StdErr).split('\n');
+    for (var i=parsedResponse.length-1; i> -1; i--) {
+        var item = document.createElement("span");
+        item.setAttribute("class", "result");
+        item.innerText = parsedResponse[i];
+        si.after(item);
+    }
     changeTarget("left");
     changeRead("left");
     newLine("left");
@@ -159,6 +166,13 @@ function switchConsoleRight(commandResponse) {
         var item = document.createElement("span");
         item.setAttribute("class", "result");
         item.innerText = parsedStdout[i];
+        si.after(item);
+    }
+    var parsedStderr = b64DecodeUnicode(commandResponse.CommandResult.StdErr).split('\n');
+    for (var i=parsedStderr.length-1; i> -1; i--) {
+        var item = document.createElement("span");
+        item.setAttribute("class", "result");
+        item.innerText = parsedStderr[i];
         si.after(item);
     }
     changeTarget("right");
