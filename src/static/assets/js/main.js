@@ -147,15 +147,18 @@ function switchConsoleLeft(commandResponse) {
 // 右画面の制御
 function switchConsoleRight(commandResponse) {
     var si = document.getElementById("standard-input-right");
-    var parsedResponse = b64DecodeUnicode(commandResponse.CommandResult.StdOut).split('\n');
-    if (parsedResponse.length > 1) {
-        parsedResponse.pop();
-        rightCurrentDir = parsedResponse.pop();
+    command = commandResponse.CommandResult.Command.replace(/(^cd \/[^ ]+ |; pwd$)/g, "")
+    si.value = command
+
+    var parsedStdout = b64DecodeUnicode(commandResponse.CommandResult.StdOut).split('\n');
+    if (parsedStdout.length > 1) {
+        parsedStdout.pop();
+        rightCurrentDir = parsedStdout.pop();
     }
-    for (var i=parsedResponse.length-1; i> -1; i--) {
+    for (var i=parsedStdout.length-1; i> -1; i--) {
         var item = document.createElement("span");
         item.setAttribute("class", "result");
-        item.innerText = parsedResponse[i];
+        item.innerText = parsedStdout[i];
         si.after(item);
     }
     changeTarget("right");
