@@ -1,4 +1,4 @@
-var url = 'ws://'+document.location.host + "/battle/ws";
+var url = 'ws://'+document.location.host + "/standard/ws";
 var conn = new WebSocket(url);
 
 // 自分のディレクトリ情報

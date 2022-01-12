@@ -45,12 +45,12 @@ func (ctrl *battleController) Index(c Context) {
 	c.HTML(200, "index.html", nil)
 }
 
-// GET /battle
+// GET /standard
 func (ctrl *battleController) Battle(c Context) {
 	c.HTML(200, "new.html", nil)
 }
 
-// POST /battle
+// POST /standard
 func (ctrl *battleController) New(c Context) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
@@ -75,15 +75,15 @@ func (ctrl *battleController) New(c Context) {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
 		ctrl.Error500(c)
 	}
-	c.Redirect(302, "/battle/wait")
+	c.Redirect(302, "/standard/wait")
 }
 
-// GET /battle/start
+// GET /standard/start
 func (ctrl *battleController) Start(c Context) {
 	c.HTML(200, "battle.html", nil)
 }
 
-/// GET /battle/wait
+/// GET /standard/wait
 func (ctrl *battleController) Wait(c Context) {
 	c.HTML(200, "wait.html", nil)
 }
