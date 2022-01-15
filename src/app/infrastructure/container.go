@@ -37,7 +37,7 @@ func (h *ContainerHandler) Run(id string) error {
 }
 
 // create container
-func (h *ContainerHandler) Create(name string) (id string, err error) {
+func (h *ContainerHandler) Create(image string, name string) (id string, err error) {
 	cc := &container.Config{
 		Image: "shellgame",
 		Tty:   true,

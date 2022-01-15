@@ -25,8 +25,8 @@ func (repo *ContainerRepository) Run(id string) error {
 	return repo.ContainerHandler.Run(id)
 }
 
-func (repo *ContainerRepository) Create(name string) (id string, err error) {
-	id, err = repo.ContainerHandler.Create(name)
+func (repo *ContainerRepository) Create(image string, name string) (id string, err error) {
+	id, err = repo.ContainerHandler.Create(image, name)
 	if err != nil {
 		return
 	}

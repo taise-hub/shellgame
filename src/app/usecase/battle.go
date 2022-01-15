@@ -6,7 +6,7 @@ import (
 )
 
 type BattleUsecase interface {
-	Start(string) error
+	Start(string, string) error
 	ParticipateIn(*model.Player, string) error
 	Receiver(*model.Player)
 	Sender(*model.Player)
@@ -24,8 +24,8 @@ func NewBattleUsecase(svc service.BattleService) BattleUsecase {
 	}
 }
 
-func (uc *battleUsecase) Start(name string) error {
-	return uc.svc.Start(name)
+func (uc *battleUsecase) Start(image string, name string) error {
+	return uc.svc.Start(image, name)
 }
 
 func (uc *battleUsecase) ParticipateIn(player *model.Player, roomName string) error {

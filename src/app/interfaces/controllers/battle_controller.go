@@ -99,7 +99,7 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
 	player := model.NewPlayer(fmt.Sprintf("%s_%s", roomName, playerName), conn)
-	if err := ctrl.uc.Start(player.ID); err != nil {
+	if err := ctrl.uc.Start("shellgame", player.ID); err != nil {
 		log.Println("invalid request!!")
 		return
 	}

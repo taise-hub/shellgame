@@ -7,7 +7,7 @@ import (
 )
 
 type BattleService interface {
-	Start(string) error
+	Start(string, string) error
 	ParticipateIn(*model.Player, string) error
 	Receiver(*model.Player)
 	Sender(*model.Player)
@@ -46,8 +46,8 @@ func (svc *battleService) createRoom(name string, supervisor *model.Supervisor) 
 	return room
 }
 
-func (svc *battleService) Start(name string) error {
-	return svc.containerSvc.Start(name)
+func (svc *battleService) Start(image string, name string) error {
+	return svc.containerSvc.Start(image, name)
 }
 
 func (svc *battleService) ParticipateIn(player *model.Player, roomName string) error {

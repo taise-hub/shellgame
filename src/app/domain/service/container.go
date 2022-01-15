@@ -7,7 +7,7 @@ import (
 )
 
 type ContainerService interface {
-	Start(string) error
+	Start(string, string) error
 	Execute(string, string) (*model.CommandResult, error)
 	Remove(string) error
 }
@@ -22,8 +22,8 @@ func NewContainerService(repo repository.ContainerRepository) ContainerService {
 	}
 }
 
-func (svc *containerService) start(name string) error {
-	id, err := svc.repo.Create(name)
+func (svc *containerService) start(image string, name string) error {
+	id, err := svc.repo.Create(image, name)
 	if err != nil {
 		return err
 	}
@@ -34,12 +34,12 @@ func (svc *containerService) start(name string) error {
 	return nil
 }
 
-func (svc *containerService) Start(name string) error {
+func (svc *containerService) Start(image string, name string) error {
 	// Return the error if the container with the same name exists.
 	if svc.repo.Exists(name) {
 		return fmt.Errorf("Error: container '%s' is already exsits.", name)
 	}
-	err := svc.start(name)
+	err := svc.start(image, name)
 	if err != nil {
 		return err
 	}
