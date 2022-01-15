@@ -16,7 +16,7 @@
 
 
 <script>
-    url = 'ws://'+document.location.host + "/standard/wswait";
+    url = 'ws://'+document.location.host + "/battle/wswait";
     conn = new WebSocket(url);
 
     conn.onmessage = function(event){
@@ -25,6 +25,6 @@
     }
 
     function redirect(){
-        location.href='/standard/start';
+        location.href='/battle/start';
 }
 </script>
