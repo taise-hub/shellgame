@@ -15,8 +15,9 @@ import (
 
 type BattleController interface {
 	Index(Context)
-	Battle(Context)
-	New(Context)
+	NewGame(Context)
+	// NewBuildinGame(Context)
+	Register(Context)
 	Start(Context)
 	Wait(Context)
 	WsWait(Context, model.Connection)
@@ -46,12 +47,17 @@ func (ctrl *battleController) Index(c Context) {
 }
 
 // GET /standard
-func (ctrl *battleController) Battle(c Context) {
+func (ctrl *battleController) NewGame(c Context) {
 	c.HTML(200, "new.html", nil)
 }
 
 // POST /standard
-func (ctrl *battleController) New(c Context) {
+func (ctrl *battleController) Register(c Context) {
+	ctrl.register(c)
+	c.Redirect(302, "/battle/wait")
+}
+
+func (ctrl *battleController) register(c Context) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 
@@ -75,7 +81,6 @@ func (ctrl *battleController) New(c Context) {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
 		ctrl.Error500(c)
 	}
-	c.Redirect(302, "/standard/wait")
 }
 
 // GET /standard/start

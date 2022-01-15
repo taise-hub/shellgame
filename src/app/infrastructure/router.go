@@ -19,10 +19,10 @@ func Router() {
 
 	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 	r.GET("/index", func(c *gin.Context) { controller.Index(c) })
-	standard := r.Group("/standard")
+	standard := r.Group("/battle")
 	{
-		standard.GET("", func(c *gin.Context) { controller.Battle(c) })
-		standard.POST("", func(c *gin.Context) { controller.New(c) })
+		standard.GET("", func(c *gin.Context) { controller.NewGame(c) })
+		standard.POST("", func(c *gin.Context) { controller.Register(c) })
 		standard.Use(hasSession())
 		{
 			standard.GET("/start", func(c *gin.Context) { controller.Start(c) })
