@@ -19,22 +19,22 @@ func Router() {
 
 	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 	r.GET("/index", func(c *gin.Context) { controller.Index(c) })
-	standard := r.Group("/battle")
+	battle := r.Group("/battle")
 	{
-		standard.GET("", func(c *gin.Context) { controller.NewGame(c) })
-		standard.POST("", func(c *gin.Context) { controller.Register(c) })
-		standard.Use(hasSession())
+		battle.GET("", func(c *gin.Context) { controller.NewGame(c) })
+		battle.POST("", func(c *gin.Context) { controller.Register(c) })
+		battle.Use(hasSession())
 		{
-			standard.GET("/start", func(c *gin.Context) { controller.Start(c) })
-			standard.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
-			standard.GET("/wswait", func(c *gin.Context) {
+			battle.GET("/start", func(c *gin.Context) { controller.Start(c) })
+			battle.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
+			battle.GET("/wswait", func(c *gin.Context) {
 				conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 				if err != nil {
 					controller.Error500(c)
 				}
 				controller.WsWait(c, conn)
 			})
-			standard.GET("/ws", func(c *gin.Context) {
+			battle.GET("/ws", func(c *gin.Context) {
 				conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 				if err != nil {
 					controller.Error500(c)
