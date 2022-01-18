@@ -23,8 +23,8 @@
                         <p>ctrl+n：ひとつ先のコマンドを表示します。</p>
                         <p>ctrl+l ：画面をクリアーします。</p>
                         <span class="heading">ごめんなさい</span>
-                        <p style="color: rgb(197, 0, 0);">タブ補完は使えないです、ごめんなさい。</p>
-                        <p>入力できないときは、カーソルをプロンプト横に合わせてください、ごめんなさい。</p>
+                        <p style="color: rgb(197, 0, 0);">タブ補完は使えないです。</p>
+                        <p>入力できないときは、カーソルをプロンプト横に合わせてください。</p>
                     </div>
                 </div>
             </div>
@@ -33,21 +33,30 @@
             <p><span id="elapsed-seconds">0</span>/300秒経過</p>
         </div>
         <div id="question" class="box">
-            <p>以下のパスにある問題を解いてください。</p>
+            <p>300秒以内に以下の問題を解いてください。</p>
             <ul id="question-list" style="list-style: none;">
             </ul>
         </div>
     </div>
     <div class=main>
-        <div class="split">    
+        <div class="split">
             <div class="split-item split-left">
+                <div>
+                    <div class="score">
+                        <span>あなたのスコア:</span> <progress id="myScore" max="100" value="0"></progress>
+                    </div>
+                </div>
                 <div class="split-left-inner">
                     <ul class="terminal">
-                        
                     </ul>
                 </div>
             </div>
             <div class="split-item split-right">
+                <div>
+                    <div  class="score">
+                        <span>あいてのスコア：</span> <progress id="opScore" max="100" value="0"></progress>
+                    </div>
+                </div>
                 <div class="split-right-inner">
                     <ul class="terminal">
                     </ul>
@@ -55,37 +64,15 @@
             </div>
         </div>
         <div class="answer">
-            <p class="subtitle">回答フォーム</p>
             <div class="input-container ic1">
-              <input id="qname" class="input" type="text" placeholder=" " />
-              <div class="cut"></div>
-              <label for="qname" class="placeholder">問題番号 (例: Q1)</label>
+                <input id="qname" class="input" type="text" placeholder=" " />
+                <label for="qname" class="placeholder">問題番号 (例: Q1)</label>
             </div>
             <div class="input-container ic2">
               <input id="answer" class="input" type="text" placeholder=" " />
-              <div class="cut"></div>
               <label for="answer" class="placeholder">答え</label>
             </div>
             <input  class="submit" type="button" value="回答を送信" onclick="requestAnswer()">
-        </div>
-
-        <div class="score">
-            <div class="own-score">
-                <div class="score-title">
-                    <p>あなたの得点</p>
-                </div>
-                <div class="score-bar">
-                    <progress id="myScore" max="100" value="0"></progress>
-                </div>
-            </div>
-            <div class="opponent-score">
-                <div>
-                    <p>相手の得点</p>
-                </div>
-                <div  class="score-bar">
-                    <progress id="opScore" max="100" value="0"></progress>
-                </div>
-            </div>
         </div>
     </div>
 </body>
