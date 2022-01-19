@@ -6,7 +6,6 @@
     <style rel="stylesheet" >
         @import url("/static/assets/css/main.css");
     </style>
-    <!-- <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfedkkdAAAAAB5mzK6rIyoaF8_XD_RgscuwJZXn"></script> -->
 </head>
 <body>
     <div class="message">
@@ -24,6 +23,7 @@
                     <input type="text" name="room">
                 </label>
             </div>
+                <input type="hidden" name="mode" value="{{.}}"></input>
             <br>
             <button type="submit">OK!</button>
         </form>
