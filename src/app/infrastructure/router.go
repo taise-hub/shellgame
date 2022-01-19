@@ -19,12 +19,14 @@ func Router() {
 
 	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 	r.GET("/index", func(c *gin.Context) { controller.Index(c) })
+	r.GET("/standard", func(c *gin.Context) { controller.NewGame(c, "stndard") })
+	r.GET("/buildin", func(c *gin.Context) { controller.NewGame(c, "buildin") })
+
 	battle := r.Group("/battle")
 	{
-		battle.GET("", func(c *gin.Context) { controller.NewGame(c) })
-		battle.POST("", func(c *gin.Context) { controller.Register(c) })
 		battle.Use(hasSession())
 		{
+			battle.POST("/", func(c *gin.Context) { controller.Register(c) })
 			battle.GET("/start", func(c *gin.Context) { controller.Start(c) })
 			battle.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
 			battle.GET("/wswait", func(c *gin.Context) {
@@ -43,30 +45,6 @@ func Router() {
 			})
 		}
 	}
-	// buildin := r.Group("/buildin")
-	// {
-	// 	buildin.GET("", func(c *gin.Context) { controller.Battle(c) })
-	// 	buildin.POST("", func(c *gin.Context) { controller.New(c) })
-	// 	buildin.Use(hasSession())
-	// 	{
-	// 		buildin.GET("/start", func(c *gin.Context) { controller.Start(c) })
-	// 		buildin.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
-	// 		buildin.GET("/wswait", func(c *gin.Context) {
-	// 			conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	// 			if err != nil {
-	// 				controller.Error500(c)
-	// 			}
-	// 			controller.WsWait(c, conn)
-	// 		})
-	// 		buildin.GET("/ws", func(c *gin.Context) {
-	// 			conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	// 			if err != nil {
-	// 				controller.Error500(c)
-	// 			}
-	// 			controller.WsBattle(c, conn)
-	// 		})
-		// }
-	// }
 	r.Run(":8080")
 }
 
