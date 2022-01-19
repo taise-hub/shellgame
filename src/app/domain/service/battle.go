@@ -10,6 +10,7 @@ type BattleService interface {
 	Start(string, string) error
 	ParticipateIn(*model.Player, string) error
 	Receiver(*model.Player)
+	SelectMode(string) string
 	Sender(*model.Player)
 	CanCreateRoom(string) bool
 	StartSignalSender(*model.Player, string)
@@ -59,6 +60,15 @@ func (svc *battleService) ParticipateIn(player *model.Player, roomName string) e
 	}
 	player.SetRoom(room)
 	return nil
+}
+
+func (svc *battleService) SelectMode(mode string) string {
+	switch mode {
+	case "buildin":
+		return "buildinshellgame"
+	default:
+		return "shellgame"
+	}
 }
 
 func (svc *battleService) CanCreateRoom(name string) bool {
