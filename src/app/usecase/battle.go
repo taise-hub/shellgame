@@ -10,6 +10,7 @@ type BattleUsecase interface {
 	ParticipateIn(*model.Player, string) error
 	Receiver(*model.Player)
 	Sender(*model.Player)
+	SelectMode(string) string
 	CanCreateRoom(string) bool
 	StartSignalSender(*model.Player, string)
 }
@@ -38,6 +39,10 @@ func (uc *battleUsecase) Receiver(player *model.Player) {
 
 func (uc *battleUsecase) Sender(player *model.Player) {
 	uc.svc.Sender(player)
+}
+
+func (uc *battleUsecase) SelectMode(mode string) string {
+	return uc.svc.SelectMode(mode)
 }
 
 func (uc *battleUsecase) CanCreateRoom(name string) bool {
