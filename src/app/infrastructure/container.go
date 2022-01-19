@@ -39,7 +39,7 @@ func (h *ContainerHandler) Run(id string) error {
 // create container
 func (h *ContainerHandler) Create(image string, name string) (id string, err error) {
 	cc := &container.Config{
-		Image: "shellgame",
+		Image: image,
 		Tty:   true,
 		NetworkDisabled: true,
 	}
