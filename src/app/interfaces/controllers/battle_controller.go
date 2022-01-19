@@ -15,8 +15,7 @@ import (
 
 type BattleController interface {
 	Index(Context)
-	NewGame(Context)
-	// NewBuildinGame(Context)
+	NewGame(Context, string)
 	Register(Context)
 	Start(Context)
 	Wait(Context)
@@ -47,8 +46,8 @@ func (ctrl *battleController) Index(c Context) {
 }
 
 // GET /standard
-func (ctrl *battleController) NewGame(c Context) {
-	c.HTML(200, "new.html", nil)
+func (ctrl *battleController) NewGame(c Context, mode string) {
+	c.HTML(200, "new.html", mode)
 }
 
 // POST /standard
@@ -63,6 +62,7 @@ func (ctrl *battleController) register(c Context) {
 
 	playerName := c.PostForm("name")
 	roomName := c.PostForm("room")
+	mode := c.PostForm("mode")
 	if playerName == "" || roomName == "" {
 		ctrl.Error400(c, "ニックネームまたは部屋名を入力してください。")
 		return
@@ -77,6 +77,7 @@ func (ctrl *battleController) register(c Context) {
 	}
 	session.Set("player", playerName)
 	session.Set("room", roomName)
+	session.Set("mode", mode)
 	if err := session.Save(); err != nil {
 		log.Printf("failed at PostJoinBattle(): %s\n", err.Error())
 		ctrl.Error500(c)
@@ -98,8 +99,9 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 	roomName := session.Get("room").(string)
 	playerName := session.Get("player").(string)
+	mode := session.Get("mode").(string)
 	player := model.NewPlayer(fmt.Sprintf("%s_%s", roomName, playerName), conn)
-	if err := ctrl.uc.Start("shellgame", player.ID); err != nil {
+	if err := ctrl.uc.Start(ctrl.uc.SelectMode(mode), player.ID); err != nil {
 		log.Println("invalid request!!")
 		return
 	}
