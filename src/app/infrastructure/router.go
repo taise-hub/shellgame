@@ -13,7 +13,7 @@ func Router() {
 	// r.Static("/static/assets/", "/srv/shellgame/static/assets")
 	// r.LoadHTMLGlob("/srv/shellgame/templates/*")
 	r.Static("/static/assets/", "../static/assets")
-	r.LoadHTMLGlob("../templates/*")
+	r.LoadHTMLGlob("../templates/*.html")
 	r.Use(sessions.Sessions("mysession", cookie.NewStore([]byte("secret"))))
 	controller := controller.NewBattleController(NewSqlHandler(), NewContainerHandler(), NewWebSocketHandler())
 
