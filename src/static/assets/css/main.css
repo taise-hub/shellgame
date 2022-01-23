@@ -83,3 +83,21 @@ font-weight: 900;
     font-size: 15px;
     line-height: 150%;
 }
+.message {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.message button {
+    /* background-color: #08d; */
+    border-radius: 10px;
+    border: 20;
+    box-sizing: border-box;
+    color: black;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 10px;
+    padding: 5px;
+    outline: 10;
+    text-align: center;
+  }
