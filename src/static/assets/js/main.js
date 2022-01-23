@@ -246,10 +246,18 @@ function changeRead(mode) {
 // clearコマンド実行時の処理
 function clearLeft() {
     var terminal = document.getElementsByClassName("terminal")[0];
-    while( terminal.firstChild ){
-        terminal.removeChild( terminal.firstChild );
-      }
-    newLine('left');
+    var command = document.getElementById("standard-input-left").value;
+    if (command == "clear") {
+        while (terminal.firstChild) {
+            terminal.removeChild(terminal.firstChild);
+        }
+        newLine("left");
+    }
+    else {
+        while( terminal.childElementCount != 1 ){
+            terminal.removeChild( terminal.firstChild );
+        }
+    }
 }
 
 //　回答の送信
