@@ -24,9 +24,9 @@ func Router() {
 
 	battle := r.Group("/battle")
 	{
+		battle.POST("/", func(c *gin.Context) { controller.Register(c) })
 		battle.Use(hasSession())
 		{
-			battle.POST("/", func(c *gin.Context) { controller.Register(c) })
 			battle.GET("/start", func(c *gin.Context) { controller.Start(c) })
 			battle.GET("/wait", func(c *gin.Context) { controller.Wait(c) })
 			battle.GET("/wswait", func(c *gin.Context) {
