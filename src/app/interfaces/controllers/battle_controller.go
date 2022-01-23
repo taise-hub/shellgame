@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/taise-hub/shellgame/src/app/usecase"
 	"fmt"
+	"github.com/google/uuid"
 	"golang.org/x/exp/utf8string"
 	"github.com/gin-contrib/sessions"
 	"github.com/taise-hub/shellgame/src/app/domain/model"
@@ -60,22 +61,20 @@ func (ctrl *battleController) register(c Context) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 
-	playerName := c.PostForm("name")
 	roomName := c.PostForm("room")
 	mode := c.PostForm("mode")
-	if playerName == "" || roomName == "" {
-		ctrl.Error400(c, "ニックネームまたは部屋名を入力してください。")
+	if roomName == "" {
+		ctrl.Error400(c, "あいことばを入力してください。")
 		return
 	}
-	if !utf8string.NewString(playerName).IsASCII() || !utf8string.NewString(roomName).IsASCII() {
+	if !utf8string.NewString(roomName).IsASCII() {
 		ctrl.Error400(c, "入力値は英数字でお願いします。")
 		return
 	}
 	if !ctrl.uc.CanCreateRoom(roomName) {
-		ctrl.Error400(c, "現在指定した部屋名が既に利用されています。")
+		ctrl.Error400(c, "指定したあいことばが、現在既に利用されています。")
 		return
 	}
-	session.Set("player", playerName)
 	session.Set("room", roomName)
 	session.Set("mode", mode)
 	if err := session.Save(); err != nil {
@@ -98,9 +97,12 @@ func (ctrl *battleController) WsBattle(c Context, conn model.Connection) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 	roomName := session.Get("room").(string)
-	playerName := session.Get("player").(string)
+	u, err := uuid.NewRandom()
+	if err != nil {
+		c.HTML(500, "500.html", nil)
+	}
 	mode := session.Get("mode").(string)
-	player := model.NewPlayer(fmt.Sprintf("%s_%s", roomName, playerName), conn)
+	player := model.NewPlayer(fmt.Sprintf("%s_%s", roomName, u.String()), conn)
 	if err := ctrl.uc.Start(ctrl.uc.SelectMode(mode), player.ID); err != nil {
 		log.Println("invalid request!!")
 		return
@@ -122,7 +124,10 @@ func (ctrl *battleController) WsWait(c Context, conn model.Connection) {
 	// Same as sessions.Defalut()
 	session := c.MustGet(sessions.DefaultKey).(sessions.Session)
 	roomName := session.Get("room").(string)
-	playerName := session.Get("player").(string)
-	player := model.NewPlayer(playerName, conn)
+	u, err := uuid.NewRandom()
+	if err != nil {
+		c.HTML(500, "500.html", nil)
+	}
+	player := model.NewPlayer(u.String(), conn)
 	ctrl.uc.StartSignalSender(player, roomName)
 }

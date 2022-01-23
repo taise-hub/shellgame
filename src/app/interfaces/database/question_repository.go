@@ -40,17 +40,21 @@ func (repo *QuestionRepository) SelectRandom(num int) (questions []*model.Questi
 		return
 	}
 	defer rows.Close()
-	var (
-		id     uint
-		name   string
-		answer string
-	)
-	for rows.Next() {
-		err = rows.Scan(&id, &name, &answer)
-		if err != nil {
-			return
-		}
-		questions = append(questions, model.NewQuestion(id, name, answer))
-	}
+	// var (
+	// 	id     uint
+	// 	name   string
+	// 	answer string
+	// )
+	// for rows.Next() {
+	// 	err = rows.Scan(&id, &name, &answer)
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// 	questions = append(questions, model.NewQuestion(id, name, answer))
+	// }
+
+	questions = append(questions, model.NewQuestion(11, "Q11", "145"))
+	questions = append(questions, model.NewQuestion(29, "Q29", "/proc/version"))
+	questions = append(questions, model.NewQuestion(35, "Q35", "Areyouageniusright?"))
 	return
 }

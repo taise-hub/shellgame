@@ -50,7 +50,7 @@ func Router() {
 
 func hasSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if sessions.Default(c).Get("player") == nil {
+		if sessions.Default(c).Get("room") == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "nosession"})
 			return
 		}

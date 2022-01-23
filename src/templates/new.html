@@ -9,22 +9,22 @@
 </head>
 <body>
     <div class="message">
-        <p>入力は英数字でお願いします</p>
         <form id="battle-form" method="POST" action="/battle">
-            <div>
+            <!-- <div>
                 <label>
                     <h1>ニックネーム</h1>
                     <input type="text" name="name">
                 </label>
-            </div>
+            </div> -->
             <div>
                 <label>
-                    <h1>合言葉</h1>
+                    <h1>あいことば</h1>
                     <input type="text" name="room">
                 </label>
             </div>
                 <input type="hidden" name="mode" value="{{.}}"></input>
-            <br>
+                <br>
+            <p>入力は英数字でお願いします</p>
             <button type="submit">OK!</button>
         </form>
     </div>
