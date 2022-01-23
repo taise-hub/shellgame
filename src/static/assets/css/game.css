@@ -8,7 +8,7 @@ html, body {
     height: 100%;
     word-break: break-all;
     background-color: #000000;
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 :focus{
